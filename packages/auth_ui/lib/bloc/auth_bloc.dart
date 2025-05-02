@@ -1,67 +1,64 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:auth_repo/auth_repo.dart';
 
 import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthRepository _authRepository;
+  final AuthRepo authRepo;
 
-  AuthBloc({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(const AuthState.unknown()) {
-    on<AuthSignUpRequested>(_onSignup);
-    on<AuthLoginRequested>(_onLogin);
-    on<AuthLogoutRequested>(_onLogout);
+  AuthBloc({required this.authRepo}) : super(const AuthState.unknown()) {
+    on<AuthSignUpRequested>(_onSignUpRequested);
+    on<AuthLoginRequested>(_onLoginRequested);
+    on<AuthLogoutRequested>(_onLogoutRequested);
     on<AuthUserChanged>(_onUserChanged);
-
-    _authRepository.user.listen((user) {
-      add(AuthUserChanged(user));
-    });
   }
 
-  Future<void> _onSignup(
+  Future<void> _onSignUpRequested(
     AuthSignUpRequested event,
     Emitter<AuthState> emit,
   ) async {
     try {
-      await _authRepository.signUp(
+      final user = await authRepo.signUp(
         email: event.email,
         password: event.password,
       );
-    } catch (_) {
-      emit(const AuthState.unauthenticated());
+      emit(AuthState.authenticated(user));
+    } catch (e) {
+      emit(AuthState.failure(e.toString()));
     }
   }
 
-  Future<void> _onLogin(
+  Future<void> _onLoginRequested(
     AuthLoginRequested event,
     Emitter<AuthState> emit,
   ) async {
     try {
-      await _authRepository.logIn(
+      final user = await authRepo.login(
         email: event.email,
         password: event.password,
       );
-    } catch (_) {
-      emit(const AuthState.unauthenticated());
+      emit(AuthState.authenticated(user));
+    } catch (e) {
+      emit(AuthState.failure(e.toString()));
     }
   }
 
-  Future<void> _onLogout(
+  Future<void> _onLogoutRequested(
     AuthLogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    await _authRepository.logOut();
+    await authRepo.logout();
+    emit(const AuthState.unauthenticated());
   }
 
   void _onUserChanged(
     AuthUserChanged event,
     Emitter<AuthState> emit,
   ) {
-    final user = event.user;
-    if (user != null) {
-      emit(AuthState.authenticated(user));
+    if (event.user != null) {
+      emit(AuthState.authenticated(event.user!));
     } else {
       emit(const AuthState.unauthenticated());
     }
