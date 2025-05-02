@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/form_input.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auth_repo/auth_repo.dart'; // only needed if User is referenced
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({super.key});
@@ -16,8 +20,7 @@ class _SignupFormState extends State<SignupForm> {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    // TODO: dispatch Bloc signup event or call AuthRepo
-    print('Signup pressed: $email / $password');
+    context.read<AuthBloc>().add(AuthSignUpRequested(email, password));
   }
 
   @override
