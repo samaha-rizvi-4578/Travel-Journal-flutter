@@ -32,7 +32,10 @@ class _SignupFormState extends State<SignupForm> {
     return Column(
       children: [
         FormInput(label: 'Email', controller: _emailController),
-        FormInput(label: 'Password', controller: _passwordController, obscureText: true),
+        FormInput(
+            label: 'Password',
+            controller: _passwordController,
+            obscureText: true),
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: _onSignupPressed,
@@ -41,7 +44,7 @@ class _SignupFormState extends State<SignupForm> {
         const SizedBox(height: 12),
         TextButton(
           onPressed: () {
-            // TODO: Navigate to Login screen
+            Navigator.pop(context); // Return to login screen
           },
           child: const Text('Already have an account? Login'),
         ),

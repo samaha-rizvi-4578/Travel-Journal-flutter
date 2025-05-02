@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/form_input.dart';
+import '../signup/signup_screen.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -32,7 +33,10 @@ class _LoginFormState extends State<LoginForm> {
     return Column(
       children: [
         FormInput(label: 'Email', controller: _emailController),
-        FormInput(label: 'Password', controller: _passwordController, obscureText: true),
+        FormInput(
+            label: 'Password',
+            controller: _passwordController,
+            obscureText: true),
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: _onLoginPressed,
@@ -41,7 +45,10 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(height: 12),
         TextButton(
           onPressed: () {
-            // TODO: Navigate to Signup screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SignupScreen()),
+            );
           },
           child: const Text('Don’t have an account? Sign Up'),
         ),
