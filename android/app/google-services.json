@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "140582184873",
+    "project_id": "traveljournel-b7592",
+    "storage_bucket": "traveljournel-b7592.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140582184873:android:071a6c4797c601a2fa06b8",
+        "android_client_info": {
+          "package_name": "com.example.travel_journel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxdSAD6l7SE41WP_Vratb86jApahYHJRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
