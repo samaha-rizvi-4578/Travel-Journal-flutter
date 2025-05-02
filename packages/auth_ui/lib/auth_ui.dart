@@ -1,5 +1,4 @@
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+library auth_ui;
+
+export 'login/login_screen.dart';
+export 'signup/signup_screen.dart';
