@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/form_input.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:auth_repo/auth_repo.dart'; // only needed if User is referenced
+import '../widgets/form_input.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 
@@ -20,7 +19,13 @@ class _SignupFormState extends State<SignupForm> {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    context.read<AuthBloc>().add(AuthSignUpRequested(email, password));
+    if (email.isNotEmpty && password.isNotEmpty) {
+      context.read<AuthBloc>().add(AuthSignUpRequested(email, password));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter email and password')),
+      );
+    }
   }
 
   @override
@@ -36,9 +41,10 @@ class _SignupFormState extends State<SignupForm> {
       children: [
         FormInput(label: 'Email', controller: _emailController),
         FormInput(
-            label: 'Password',
-            controller: _passwordController,
-            obscureText: true),
+          label: 'Password',
+          controller: _passwordController,
+          obscureText: true,
+        ),
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: _onSignupPressed,
@@ -47,7 +53,7 @@ class _SignupFormState extends State<SignupForm> {
         const SizedBox(height: 12),
         TextButton(
           onPressed: () {
-            Navigator.pop(context); // Return to login screen
+            Navigator.pop(context);
           },
           child: const Text('Already have an account? Login'),
         ),
