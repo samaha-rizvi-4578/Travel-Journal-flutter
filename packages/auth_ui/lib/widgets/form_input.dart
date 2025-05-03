@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/material.dart';
 
 class FormInput extends StatelessWidget {
   final String label;
   final TextEditingController controller;
   final bool obscureText;
+  final IconData? icon;
 
   const FormInput({
+    super.key,
     required this.label,
     required this.controller,
     this.obscureText = false,
-    super.key,
+    this.icon,
   });
 
   @override
@@ -19,9 +23,18 @@ class FormInput extends StatelessWidget {
       child: TextField(
         controller: controller,
         obscureText: obscureText,
+        style: GoogleFonts.poppins(),
         decoration: InputDecoration(
+          prefixIcon: icon != null ? Icon(icon, color: Colors.teal[400]) : null,
           labelText: label,
-          border: const OutlineInputBorder(),
+          labelStyle: GoogleFonts.poppins(
+            color: Colors.teal[700],
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          filled: true,
+          fillColor: Colors.teal[50],
         ),
       ),
     );

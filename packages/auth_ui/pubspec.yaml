@@ -13,7 +13,7 @@ dependencies:
     path: ../auth_repo
   flutter_bloc: ^9.1.1
   equatable: ^2.0.7
-
+  google_fonts: ^6.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -40,11 +40,16 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FormInput(label: 'Email', controller: _emailController),
+        FormInput(
+          label: 'Email',
+          controller: _emailController,
+          icon: Icons.email,
+        ),
         FormInput(
           label: 'Password',
           controller: _passwordController,
           obscureText: true,
+          icon: Icons.lock,
         ),
         const SizedBox(height: 16),
         ElevatedButton(

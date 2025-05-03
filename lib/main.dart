@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'firebase_options.dart';
 import 'package:auth_repo/auth_repo.dart';
 import 'package:auth_ui/auth_ui.dart';
@@ -30,16 +32,50 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Travel Journal',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.teal,
+              brightness: Brightness.light,
+            ),
+            textTheme: GoogleFonts.poppinsTextTheme(),
+            scaffoldBackgroundColor: const Color(0xFFF2FAF9),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Color(0xFFB2DFDB),
+              foregroundColor: Colors.black87,
+              elevation: 0,
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              fillColor: Colors.teal[50],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              labelStyle: const TextStyle(color: Colors.teal),
+            ),
+            iconTheme: const IconThemeData(color: Colors.teal),
           ),
-          initialRoute: '/',
-          routes: {
-            '/': (_) => const LoginScreen(), // Login screen route
-            '/home': (_) => const HomeScreen(), // Home screen route
+          onGenerateRoute: (settings) {
+            switch (settings.name) {
+              case '/':
+                return _fadeRoute(const LoginScreen());
+              case '/home':
+                return _fadeRoute(const HomeScreen());
+              default:
+                return null;
+            }
           },
         ),
       ),
+    );
+  }
+
+  PageRouteBuilder _fadeRoute(Widget screen) {
+    return PageRouteBuilder(
+      pageBuilder: (_, __, ___) => screen,
+      transitionsBuilder: (_, animation, __, child) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+      transitionDuration: const Duration(milliseconds: 500),
     );
   }
 }
@@ -53,25 +89,22 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text('Travel Journal'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // Dispatch logout
               context.read<AuthBloc>().add(AuthLogoutRequested());
-
-              // Navigate to LoginScreen and remove all previous routes
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-                (route) => false,
-              );
+              Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
             },
           ),
         ],
       ),
       body: Center(
-        child: Text('Welcome, ${user?.email ?? "Unknown"}'),
+        child: Text(
+          'Welcome, ${user?.email ?? "Traveler"}',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
       ),
     );
   }
