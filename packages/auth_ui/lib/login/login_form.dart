@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/form_input.dart';
 import '../signup/signup_screen.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -17,8 +20,13 @@ class _LoginFormState extends State<LoginForm> {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    // TODO: dispatch Bloc login event or call AuthRepo
-    print('Login pressed: $email / $password');
+    if (email.isNotEmpty && password.isNotEmpty) {
+      context.read<AuthBloc>().add(AuthLoginRequested(email, password));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter email and password')),
+      );
+    }
   }
 
   @override
@@ -34,9 +42,10 @@ class _LoginFormState extends State<LoginForm> {
       children: [
         FormInput(label: 'Email', controller: _emailController),
         FormInput(
-            label: 'Password',
-            controller: _passwordController,
-            obscureText: true),
+          label: 'Password',
+          controller: _passwordController,
+          obscureText: true,
+        ),
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: _onLoginPressed,
