@@ -1,3 +1,3 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* Initial release of the authentication UI package, providing basic login and registration functionality.
