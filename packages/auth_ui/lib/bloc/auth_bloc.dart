@@ -6,7 +6,7 @@ import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthRepo authRepo;
+  final AuthRepository authRepo;
 
   AuthBloc({required this.authRepo}) : super(const AuthState.unknown()) {
     on<AuthSignUpRequested>(_onSignUpRequested);
@@ -35,7 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     try {
-      final user = await authRepo.login(
+      final user = await authRepo.logIn(
         email: event.email,
         password: event.password,
       );
@@ -49,7 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    await authRepo.logout();
+    await authRepo.logOut();
     emit(const AuthState.unauthenticated());
   }
 

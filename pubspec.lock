@@ -48,6 +48,13 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  auth_ui:
+    dependency: "direct main"
+    description:
+      path: "packages/auth_ui"
+      relative: true
+    source: path
+    version: "0.0.1"
   bloc:
     dependency: transitive
     description:
