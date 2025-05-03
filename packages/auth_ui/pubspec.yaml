@@ -1,0 +1,20 @@
+name: auth_ui
+description: UI package for handling authentication screens.
+version: 0.0.1
+publish_to: 'none'
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  auth_repo:
+    path: ../auth_repo
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.7
+  google_fonts: ^6.2.1
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
