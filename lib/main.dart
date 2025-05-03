@@ -2,14 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
-
 import 'package:auth_repo/auth_repo.dart';
-import 'package:auth_ui/bloc/auth_bloc.dart';
-import 'package:auth_ui/bloc/auth_event.dart';
-import 'package:auth_ui/bloc/auth_state.dart';
-import 'package:auth_ui/login/login_screen.dart';
-
-
+import 'package:auth_ui/auth_ui.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +26,7 @@ class MyApp extends StatelessWidget {
     return RepositoryProvider.value(
       value: authRepo,
       child: BlocProvider(
-        create: (_) => AuthBloc(authRepo: authRepo)..add(const AuthUserChanged(null)),
+        create: (_) => AuthBloc(authRepo: authRepo)..add(AuthUserChanged(authRepo.currentUser)),
         child: MaterialApp(
           title: 'Travel Journal',
           theme: ThemeData(
@@ -41,8 +35,8 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: '/',
           routes: {
-            '/': (_) => const LoginScreen(),
-            '/home': (_) => const HomeScreen(), // dummy for now
+            '/': (_) => const LoginScreen(), // Login screen route
+            '/home': (_) => const HomeScreen(), // Home screen route
           },
         ),
       ),
@@ -58,21 +52,26 @@ class HomeScreen extends StatelessWidget {
     final user = context.select((AuthBloc bloc) => bloc.state.user);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      appBar: AppBar(
+        title: const Text('Home'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              // Dispatch logout
+              context.read<AuthBloc>().add(AuthLogoutRequested());
+
+              // Navigate to LoginScreen and remove all previous routes
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                (route) => false,
+              );
+            },
+          ),
+        ],
+      ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Welcome ${user?.email ?? 'Unknown'}'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(AuthLogoutRequested());
-              },
-              child: const Text('Logout'),
-            ),
-          ],
-        ),
+        child: Text('Welcome, ${user?.email ?? "Unknown"}'),
       ),
     );
   }
