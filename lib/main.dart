@@ -1,8 +1,13 @@
+// main.dart
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:auth_repo/auth_repo.dart';
+import 'package:auth_repo/auth_repo.dart'; // Make sure this is correct
 import 'firebase_options.dart';
 import 'app.dart';
+
+// ✅ Declare global repository
+late final AuthRepository globalAuthRepo;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,12 +15,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // ✅ Initialize global repository
   final authRepo = AuthRepository();
+  globalAuthRepo = authRepo;
 
   runApp(App(authRepo: authRepo));
 }
-
-
 // import 'package:flutter/material.dart';
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';

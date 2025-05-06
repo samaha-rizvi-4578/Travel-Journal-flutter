@@ -1,4 +1,3 @@
-// lib/journal/presentation/pages/add_journal_page.dart
 import 'package:flutter/material.dart';
 import './../../../shared//utils/image_picker_helper.dart';
 import './../../../journal/data/journal_model.dart';

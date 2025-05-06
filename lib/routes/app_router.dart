@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart'; 
+import './../main.dart';
 
 // Auth
 import 'package:auth_repo/auth_repo.dart';
@@ -37,7 +38,8 @@ class AppRouter {
         name: 'login',
         builder: (context, state) => const LoginScreen(),
         redirect: (context, state) {
-          final user = context.select((AuthRepository r) => r.currentUser);
+          final authRepo = globalAuthRepo;
+          final user = authRepo.currentUser;
           if (user != null) return '/feed';
           return null;
         },
