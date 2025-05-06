@@ -1,13 +1,9 @@
 // lib/journal/presentation/pages/edit_journal_page.dart
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-// import 'package:travel_journal/shared/utils/image_picker_helper.dart';
-// import 'package:travel_journal/journal/data/journal_model.dart';
-// import 'package:travel_journal/journal/data/journal_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; 
 import './../../../journal/data/journal_model.dart';
 import './../../../journal/data/journal_repository.dart';
 import './../../../shared/utils/image_picker_helper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditJournalPage extends StatefulWidget {
   final TravelJournal journal;

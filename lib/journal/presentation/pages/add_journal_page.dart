@@ -1,11 +1,11 @@
 // lib/journal/presentation/pages/add_journal_page.dart
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import './../../../shared//utils/image_picker_helper.dart';
 import './../../../journal/data/journal_model.dart';
 import './../../../journal/data/journal_repository.dart';
-import 'package:auth_repo/auth_repo.dart';
 import 'package:auth_ui/auth_ui.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; 
 
 class AddJournalPage extends StatefulWidget {
   const AddJournalPage({super.key});

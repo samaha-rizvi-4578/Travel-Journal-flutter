@@ -11,6 +11,8 @@ class TravelJournal extends Equatable {
   final bool visited;
   final String userId;
   final Timestamp createdAt;
+  final double? latitude;  
+  final double? longitude; 
 
   const TravelJournal({
     required this.id,
@@ -21,7 +23,35 @@ class TravelJournal extends Equatable {
     required this.visited,
     required this.userId,
     required this.createdAt,
+    this.latitude,
+    this.longitude,
   });
+
+  TravelJournal copyWith({
+    String? id,
+    String? placeName,
+    String? imageUrl,
+    String? notes,
+    String? mood,
+    bool? visited,
+    String? userId,
+    Timestamp? createdAt,
+    double? latitude,
+    double? longitude,
+  }) {
+    return TravelJournal(
+      id: id ?? this.id,
+      placeName: placeName ?? this.placeName,
+      imageUrl: imageUrl ?? this.imageUrl,
+      notes: notes ?? this.notes,
+      mood: mood ?? this.mood,
+      visited: visited ?? this.visited,
+      userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -45,6 +75,8 @@ class TravelJournal extends Equatable {
       visited: map['visited'] ?? false,
       userId: map['userId'] ?? '',
       createdAt: map['createdAt'] ?? Timestamp.now(),
+      latitude: map['latitude'] is num ? map['latitude'].toDouble() : null,
+      longitude: map['longitude'] is num ? map['longitude'].toDouble() : null,
     );
   }
 
@@ -57,6 +89,8 @@ class TravelJournal extends Equatable {
       'visited': visited,
       'userId': userId,
       'createdAt': createdAt,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 }

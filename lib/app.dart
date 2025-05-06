@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auth_repo/auth_repo.dart';
-import '../../../journal/data/journal_repository.dart';
 import 'package:auth_ui/auth_ui.dart';
+import '../../../journal/data/journal_repository.dart';
 import './routes/app_router.dart';
 
 class App extends StatelessWidget {
