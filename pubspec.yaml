@@ -42,7 +42,7 @@ dependencies:
     path: packages/auth_repo
   auth_ui:
     path: packages/auth_ui
-
+  intl: ^0.18.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -75,3 +75,7 @@ flutter:
     - assets/images/logo.png
     - assets/images/logoblack.png
     - assets/images/logowhite.png
+    - assets/images/travel_image.png
+    - assets/images/image1.jpeg
+    - assets/images/image2.jpeg
+    - assets/images/image3.jpg
