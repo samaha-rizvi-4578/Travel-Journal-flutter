@@ -107,11 +107,11 @@ class AppRouter {
           return EditJournalPage(journal: journal);
         },
       ),
-      // GoRoute(
-      //   path: '/add-journal',
-      //   name: 'add_journal',
-      //   builder: (context, state) => const AddJournalPage(),
-      // ),
+      GoRoute(
+        path: '/add-journal',
+        name: 'add_journal',
+        builder: (context, state) => const AddJournalPage(),
+      ),
       // GoRoute(
       //   path: '/map',
       //   name: 'map',
