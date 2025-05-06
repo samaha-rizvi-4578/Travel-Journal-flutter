@@ -1,6 +1,4 @@
-// lib/journal/bloc/journal_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../journal/data/journal_model.dart';
 import '../../journal/data/journal_repository.dart';
 import '../../journal/bloc/journal_event.dart';
 import '../../journal/bloc/journal_state.dart';
