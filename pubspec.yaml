@@ -41,6 +41,7 @@ dependencies:
   auth_repo:
     path: packages/auth_repo
   go_router: ^13.0.0
+  image_picker: ^1.0.7 
   auth_ui:
     path: packages/auth_ui
   intl: ^0.18.1
