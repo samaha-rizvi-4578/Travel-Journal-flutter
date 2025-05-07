@@ -11,6 +11,7 @@ import 'package:auth_repo/auth_repo.dart';
 import 'package:auth_ui/auth_ui.dart';
 
 // Screens
+import './../home/presentation/pages/home_page.dart';
 import './../map/presentation/map_view.dart';
 import './../journal/presentation/pages/add_journal_page.dart';
 import './../journal/presentation/pages/edit_journal_page.dart';
@@ -33,6 +34,7 @@ class AppRouter {
     refreshListenable: GoRouterRefreshStream(authRepo.user),
     initialLocation: '/',
     routes: <GoRoute>[
+      // Login Route
       GoRoute(
         path: '/',
         name: 'login',
@@ -40,15 +42,26 @@ class AppRouter {
         redirect: (context, state) {
           final authRepo = globalAuthRepo;
           final user = authRepo.currentUser;
-          if (user != null) return '/feed';
+          if (user != null) return '/home'; // Redirect to Home Page after login
           return null;
         },
       ),
+
+      // Home Route
+      GoRoute(
+        path: '/home',
+        name: 'home',
+        builder: (context, state) => const HomePage(),
+      ),
+
+      // Feed Route (Journals)
       GoRoute(
         path: '/feed',
         name: 'feed',
         builder: (context, state) => const JournalFeedPage(),
       ),
+
+      // View Journal Route
       GoRoute(
         path: '/journal/:id',
         name: 'view_journal',
@@ -61,16 +74,15 @@ class AppRouter {
             final journals = (journalBloc.state as JournalLoaded).journals;
             journal = journals.firstWhere(
               (j) => j.id == journalId,
-              orElse:
-                  () => TravelJournal(
-                    id: '',
-                    placeName: 'Unknown',
-                    notes: '',
-                    mood: '',
-                    visited: false,
-                    userId: '',
-                    createdAt: Timestamp(0, 0),
-                  ),
+              orElse: () => TravelJournal(
+                id: '',
+                placeName: 'Unknown',
+                notes: '',
+                mood: '',
+                visited: false,
+                userId: '',
+                createdAt: Timestamp(0, 0),
+              ),
             );
           } else {
             journal = TravelJournal(
@@ -87,29 +99,32 @@ class AppRouter {
           return ViewJournalPage(journal: journal);
         },
       ),
+
+      // Edit Journal Route
       GoRoute(
         path: '/journal/:id/edit',
         name: 'edit_journal',
         builder: (context, state) {
-          // Use the passed journal object directly
           final journal = state.extra as TravelJournal;
 
-          // Ensure the journal object is valid
           if (journal.id.isEmpty) {
             return const Scaffold(
               body: Center(child: Text('Invalid journal data')),
             );
           }
 
-          // Navigate to the EditJournalPage with the journal
           return EditJournalPage(journal: journal);
         },
       ),
+
+      // Add Journal Route
       GoRoute(
         path: '/add-journal',
         name: 'add_journal',
         builder: (context, state) => const AddJournalPage(),
       ),
+
+      // Map Route
       GoRoute(
         path: '/map',
         name: 'map',
