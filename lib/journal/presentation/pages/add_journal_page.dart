@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
-import './../../../shared/utils/image_picker_helper.dart';
 import './../../../journal/data/journal_model.dart';
 import './../../../journal/data/journal_repository.dart';
 import 'package:auth_ui/auth_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import './../../../country_api/country_service.dart';
 
 class AddJournalPage extends StatefulWidget {
@@ -23,11 +20,9 @@ class _AddJournalPageState extends State<AddJournalPage> {
   late TextEditingController budgetController;
   late TextEditingController notesController;
 
-  String? imageUrl;
   bool visited = false;
   String selectedMood = 'Happy';
 
-  final ImagePickerHelper _imagePicker = ImagePickerHelper();
   final CountryService _countryService = CountryService();
 
   List<Map<String, dynamic>> countries = [];
@@ -40,7 +35,6 @@ class _AddJournalPageState extends State<AddJournalPage> {
     super.initState();
     budgetController = TextEditingController();
     notesController = TextEditingController();
-
     _fetchCountries();
   }
 
@@ -54,7 +48,7 @@ class _AddJournalPageState extends State<AddJournalPage> {
   Future<void> _fetchCountries() async {
     try {
       final fetchedCountries = await _countryService.fetchCountries();
-      fetchedCountries.sort((a, b) => a['name'].compareTo(b['name'])); // Sort alphabetically
+      fetchedCountries.sort((a, b) => a['name'].compareTo(b['name']));
       setState(() {
         countries = fetchedCountries;
       });
@@ -73,7 +67,7 @@ class _AddJournalPageState extends State<AddJournalPage> {
       final newJournal = TravelJournal(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         placeName: selectedCountry ?? '',
-        imageUrl: imageUrl,
+        imageUrl: null,
         notes: notesController.text,
         mood: selectedMood,
         visited: visited,
@@ -85,39 +79,11 @@ class _AddJournalPageState extends State<AddJournalPage> {
 
       try {
         await context.read<JournalRepository>().addJournal(newJournal);
-        Navigator.pop(context); // Go back to feed
+        Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error saving journal: $e")),
         );
-      }
-    }
-  }
-
-  Future<void> _pickImage() async {
-    final pickedImage = await _imagePicker.pickImageFromGallery();
-    if (pickedImage != null) {
-      try {
-        // Upload the image to Firebase Storage
-        final storageRef = FirebaseStorage.instance.ref();
-        final imageRef = storageRef.child(
-          'journal_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
-        );
-        final uploadTask = await imageRef.putFile(
-          File(pickedImage),
-        );
-
-        // Get the download URL
-        final downloadUrl = await imageRef.getDownloadURL();
-
-        // Update the state with the image URL
-        setState(() {
-          imageUrl = downloadUrl;
-        });
-      } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error uploading image: $e")));
       }
     }
   }
@@ -145,7 +111,7 @@ class _AddJournalPageState extends State<AddJournalPage> {
               else
                 DropdownSearch<String>(
                   popupProps: PopupProps.menu(
-                    showSearchBox: true, // Enable search functionality
+                    showSearchBox: true,
                     searchFieldProps: TextFieldProps(
                       decoration: const InputDecoration(
                         labelText: 'Search Country',
@@ -153,7 +119,7 @@ class _AddJournalPageState extends State<AddJournalPage> {
                       ),
                     ),
                   ),
-                  items: countries.map((country) => country['name'] as String).toList(),
+                  items: countries.map((c) => c['name'] as String).toList(),
                   selectedItem: selectedCountry,
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
@@ -162,8 +128,9 @@ class _AddJournalPageState extends State<AddJournalPage> {
                     ),
                   ),
                   onChanged: (value) {
-                    final country =
-                        countries.firstWhere((c) => c['name'] == value);
+                    final country = countries.firstWhere(
+                      (c) => c['name'] == value,
+                    );
                     setState(() {
                       selectedCountry = country['name'];
                       selectedLatitude = country['latitude'];
@@ -171,29 +138,27 @@ class _AddJournalPageState extends State<AddJournalPage> {
                     });
                   },
                   validator: (value) =>
-                      value == null || value.isEmpty
-                          ? 'Please select a country'
-                          : null,
+                      value == null || value.isEmpty ? 'Please select a country' : null,
                 ),
               const SizedBox(height: 16),
               TextFormField(
-  controller: budgetController,
-  keyboardType: TextInputType.number,
-  decoration: const InputDecoration(
-    labelText: 'Budget',
-    suffixText: '\$USD', // Add the currency suffix
-    border: OutlineInputBorder(),
-  ),
-  validator: (value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter a budget';
-    }
-    if (int.tryParse(value) == null) {
-      return 'Please enter a valid number';
-    }
-    return null;
-  },
-),
+                controller: budgetController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Budget',
+                  suffixText: '\$USD',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a budget';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Please enter a valid number';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -216,14 +181,8 @@ class _AddJournalPageState extends State<AddJournalPage> {
                   DropdownMenuItem(value: 'Happy', child: Text('Happy')),
                   DropdownMenuItem(value: 'Excited', child: Text('Excited')),
                   DropdownMenuItem(value: 'Relaxed', child: Text('Relaxed')),
-                  DropdownMenuItem(
-                    value: 'Adventurous',
-                    child: Text('Adventurous'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'Reflective',
-                    child: Text('Reflective'),
-                  ),
+                  DropdownMenuItem(value: 'Adventurous', child: Text('Adventurous')),
+                  DropdownMenuItem(value: 'Reflective', child: Text('Reflective')),
                 ],
                 onChanged: (value) {
                   if (value != null) {
@@ -242,22 +201,6 @@ class _AddJournalPageState extends State<AddJournalPage> {
                   labelText: 'Notes',
                   border: OutlineInputBorder(),
                 ),
-              ),
-              const SizedBox(height: 24),
-              if (imageUrl != null && imageUrl!.isNotEmpty)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    imageUrl!,
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: _pickImage,
-                icon: const Icon(Icons.image),
-                label: const Text('Add Image'),
               ),
             ],
           ),

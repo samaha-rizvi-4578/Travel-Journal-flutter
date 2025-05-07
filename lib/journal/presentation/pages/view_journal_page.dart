@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../journal/data/journal_model.dart';
 import 'package:go_router/go_router.dart';
+
 class ViewJournalPage extends StatelessWidget {
   final TravelJournal journal;
 
@@ -15,15 +16,8 @@ class ViewJournalPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-  debugPrint("Edit button pressed for journal ID: ${journal.id}");
-  debugPrint("Journal details: $journal");
-
-  // Use GoRouter's context.push to navigate
-  context.push(
-    '/journal/${journal.id}/edit',
-    extra: journal, // Pass the journal object as extra
-  );
-},
+              context.pushNamed('edit_journal', params: {'id': journal.id});
+            },
           ),
         ],
       ),
