@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import './../../../shared//utils/image_picker_helper.dart';
+import 'package:dropdown_search/dropdown_search.dart';
+import './../../../shared/utils/image_picker_helper.dart';
 import './../../../journal/data/journal_model.dart';
 import './../../../journal/data/journal_repository.dart';
 import 'package:auth_ui/auth_ui.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import './../../../country_api/country_service.dart';
 
 class AddJournalPage extends StatefulWidget {
   const AddJournalPage({super.key});
@@ -18,7 +20,6 @@ class AddJournalPage extends StatefulWidget {
 class _AddJournalPageState extends State<AddJournalPage> {
   final _formKey = GlobalKey<FormState>();
 
-  late TextEditingController placeController;
   late TextEditingController budgetController;
   late TextEditingController notesController;
 
@@ -27,84 +28,72 @@ class _AddJournalPageState extends State<AddJournalPage> {
   String selectedMood = 'Happy';
 
   final ImagePickerHelper _imagePicker = ImagePickerHelper();
+  final CountryService _countryService = CountryService();
+
+  List<Map<String, dynamic>> countries = [];
+  String? selectedCountry;
+  double? selectedLatitude;
+  double? selectedLongitude;
 
   @override
   void initState() {
     super.initState();
-    placeController = TextEditingController();
     budgetController = TextEditingController();
     notesController = TextEditingController();
+
+    _fetchCountries();
   }
 
   @override
   void dispose() {
-    placeController.dispose();
     budgetController.dispose();
     notesController.dispose();
     super.dispose();
   }
 
-  // Future<void> _submitForm(BuildContext context) async {
-  //   if (_formKey.currentState!.validate()) {
-  //     final user = context.read<AuthBloc>().state.user;
-  //     if (user == null) return;
-
-  //     final newJournal = TravelJournal(
-  //       id: DateTime.now().millisecondsSinceEpoch.toString(),
-  //       placeName: placeController.text,
-  //       imageUrl: imageUrl,
-  //       notes: notesController.text,
-  //       mood: selectedMood,
-  //       visited: visited,
-  //       userId: user.id,
-  //       createdAt: Timestamp.now(),
-  //     );
-
-  //     try {
-  //       await context.read<JournalRepository>().addJournal(newJournal);
-  //       Navigator.pop(context); // Go back to feed
-  //     } catch (e) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text("Error saving journal: $e")),
-  //       );
-  //     }
-  //   }
-  // }
- Future<void> _submitForm(BuildContext context) async {
-  if (_formKey.currentState!.validate()) {
-    final user = context.read<AuthBloc>().state.user;
-    if (user == null) return;
-
-    final newJournal = TravelJournal(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      placeName: placeController.text,
-      imageUrl: imageUrl, // Use the uploaded image URL
-      notes: notesController.text,
-      mood: selectedMood,
-      visited: visited,
-      userId: user.id,
-      createdAt: Timestamp.now(),
-    );
-
+  Future<void> _fetchCountries() async {
     try {
-      await context.read<JournalRepository>().addJournal(newJournal);
-      Navigator.pop(context); // Go back to feed
+      final fetchedCountries = await _countryService.fetchCountries();
+      fetchedCountries.sort((a, b) => a['name'].compareTo(b['name'])); // Sort alphabetically
+      setState(() {
+        countries = fetchedCountries;
+      });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error saving journal: $e")),
+        SnackBar(content: Text("Error fetching countries: $e")),
       );
     }
   }
-}
 
-  // Future<void> _pickImage() async {
-  //   final pickedImage = await _imagePicker.pickImageFromGallery();
-  //   if (pickedImage != null) {
-  //     setState(() {
-  //       imageUrl = pickedImage;
-  //     });
-  //   }
-  // }
+  Future<void> _submitForm(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      final user = context.read<AuthBloc>().state.user;
+      if (user == null) return;
+
+      final newJournal = TravelJournal(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        placeName: selectedCountry ?? '',
+        imageUrl: imageUrl,
+        notes: notesController.text,
+        mood: selectedMood,
+        visited: visited,
+        userId: user.id,
+        createdAt: Timestamp.now(),
+        latitude: selectedLatitude,
+        longitude: selectedLongitude,
+      );
+
+      try {
+        await context.read<JournalRepository>().addJournal(newJournal);
+        Navigator.pop(context); // Go back to feed
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error saving journal: $e")),
+        );
+      }
+    }
+  }
+
   Future<void> _pickImage() async {
     final pickedImage = await _imagePicker.pickImageFromGallery();
     if (pickedImage != null) {
@@ -116,7 +105,7 @@ class _AddJournalPageState extends State<AddJournalPage> {
         );
         final uploadTask = await imageRef.putFile(
           File(pickedImage),
-        ); // Use pickedImage directly
+        );
 
         // Get the download URL
         final downloadUrl = await imageRef.getDownloadURL();
@@ -151,15 +140,41 @@ class _AddJournalPageState extends State<AddJournalPage> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                controller: placeController,
-                decoration: const InputDecoration(labelText: 'Place Name'),
-                validator:
-                    (value) =>
-                        value == null || value.isEmpty
-                            ? 'Place name is required'
-                            : null,
-              ),
+              if (countries.isEmpty)
+                const Center(child: CircularProgressIndicator())
+              else
+                DropdownSearch<String>(
+                  popupProps: PopupProps.menu(
+                    showSearchBox: true, // Enable search functionality
+                    searchFieldProps: TextFieldProps(
+                      decoration: const InputDecoration(
+                        labelText: 'Search Country',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  items: countries.map((country) => country['name'] as String).toList(),
+                  selectedItem: selectedCountry,
+                  dropdownDecoratorProps: const DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      labelText: 'Country',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    final country =
+                        countries.firstWhere((c) => c['name'] == value);
+                    setState(() {
+                      selectedCountry = country['name'];
+                      selectedLatitude = country['latitude'];
+                      selectedLongitude = country['longitude'];
+                    });
+                  },
+                  validator: (value) =>
+                      value == null || value.isEmpty
+                          ? 'Please select a country'
+                          : null,
+                ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: budgetController,
