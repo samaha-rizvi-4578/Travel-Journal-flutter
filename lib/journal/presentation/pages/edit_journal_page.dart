@@ -20,7 +20,6 @@ class EditJournalPage extends StatefulWidget {
 
 class _EditJournalPageState extends State<EditJournalPage> {
   late TextEditingController notesController;
-  late TextEditingController budgetController;
   late String selectedMood;
   late bool visited;
   String? imageUrl;
@@ -40,9 +39,6 @@ class _EditJournalPageState extends State<EditJournalPage> {
 
     // Initialize controllers and fields with existing journal data
     notesController = TextEditingController(text: journal.notes);
-    budgetController = TextEditingController(
-      text: journal.budget != null ? journal.budget.toString() : '',
-    );
     selectedMood = journal.mood;
     visited = journal.visited;
     imageUrl = journal.imageUrl;
@@ -56,7 +52,6 @@ class _EditJournalPageState extends State<EditJournalPage> {
   @override
   void dispose() {
     notesController.dispose();
-    budgetController.dispose();
     super.dispose();
   }
 
@@ -83,7 +78,6 @@ class _EditJournalPageState extends State<EditJournalPage> {
       mood: selectedMood,
       visited: visited,
       imageUrl: imageUrl,
-      budget: int.tryParse(budgetController.text), // Parse budget as integer
     );
 
     try {
@@ -170,25 +164,6 @@ class _EditJournalPageState extends State<EditJournalPage> {
                   });
                 },
               ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: budgetController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Budget',
-                suffixText: '\$USD', // Add the currency suffix
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a budget';
-                }
-                if (int.tryParse(value) == null) {
-                  return 'Please enter a valid number';
-                }
-                return null;
-              },
-            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
