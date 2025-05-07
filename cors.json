@@ -3,6 +3,6 @@
       "origin": ["*"],
       "method": ["GET", "POST", "PUT", "DELETE"],
       "maxAgeSeconds": 3600,
-      "responseHeader": ["Content-Type", "x-goog-meta-custom", "Access-Control-Allow-Origin"]
+      "responseHeader": ["Content-Type", "x-goog-meta-custom", "Access-Control-Allow-Origin", "Authorization"]
     }
 ]  

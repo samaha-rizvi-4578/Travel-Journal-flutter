@@ -66,4 +66,5 @@ class DefaultFirebaseOptions {
     projectId: 'traveljournel-b7592',
     storageBucket: 'traveljournel-b7592.firebasestorage.app',
   );
+
 }

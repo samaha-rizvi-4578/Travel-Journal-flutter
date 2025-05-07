@@ -4,7 +4,9 @@ import './../../../journal/data/journal_model.dart';
 import './../../../journal/data/journal_repository.dart';
 import 'package:auth_ui/auth_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class AddJournalPage extends StatefulWidget {
   const AddJournalPage({super.key});
@@ -42,39 +44,92 @@ class _AddJournalPageState extends State<AddJournalPage> {
     super.dispose();
   }
 
-  Future<void> _submitForm(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      final user = context.read<AuthBloc>().state.user;
-      if (user == null) return;
+  // Future<void> _submitForm(BuildContext context) async {
+  //   if (_formKey.currentState!.validate()) {
+  //     final user = context.read<AuthBloc>().state.user;
+  //     if (user == null) return;
 
-      final newJournal = TravelJournal(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        placeName: placeController.text,
-        imageUrl: imageUrl,
-        notes: notesController.text,
-        mood: selectedMood,
-        visited: visited,
-        userId: user.id,
-        createdAt: Timestamp.now(),
+  //     final newJournal = TravelJournal(
+  //       id: DateTime.now().millisecondsSinceEpoch.toString(),
+  //       placeName: placeController.text,
+  //       imageUrl: imageUrl,
+  //       notes: notesController.text,
+  //       mood: selectedMood,
+  //       visited: visited,
+  //       userId: user.id,
+  //       createdAt: Timestamp.now(),
+  //     );
+
+  //     try {
+  //       await context.read<JournalRepository>().addJournal(newJournal);
+  //       Navigator.pop(context); // Go back to feed
+  //     } catch (e) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text("Error saving journal: $e")),
+  //       );
+  //     }
+  //   }
+  // }
+ Future<void> _submitForm(BuildContext context) async {
+  if (_formKey.currentState!.validate()) {
+    final user = context.read<AuthBloc>().state.user;
+    if (user == null) return;
+
+    final newJournal = TravelJournal(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      placeName: placeController.text,
+      imageUrl: imageUrl, // Use the uploaded image URL
+      notes: notesController.text,
+      mood: selectedMood,
+      visited: visited,
+      userId: user.id,
+      createdAt: Timestamp.now(),
+    );
+
+    try {
+      await context.read<JournalRepository>().addJournal(newJournal);
+      Navigator.pop(context); // Go back to feed
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error saving journal: $e")),
       );
-
-      try {
-        await context.read<JournalRepository>().addJournal(newJournal);
-        Navigator.pop(context); // Go back to feed
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error saving journal: $e")),
-        );
-      }
     }
   }
+}
 
+  // Future<void> _pickImage() async {
+  //   final pickedImage = await _imagePicker.pickImageFromGallery();
+  //   if (pickedImage != null) {
+  //     setState(() {
+  //       imageUrl = pickedImage;
+  //     });
+  //   }
+  // }
   Future<void> _pickImage() async {
     final pickedImage = await _imagePicker.pickImageFromGallery();
     if (pickedImage != null) {
-      setState(() {
-        imageUrl = pickedImage;
-      });
+      try {
+        // Upload the image to Firebase Storage
+        final storageRef = FirebaseStorage.instance.ref();
+        final imageRef = storageRef.child(
+          'journal_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+        final uploadTask = await imageRef.putFile(
+          File(pickedImage),
+        ); // Use pickedImage directly
+
+        // Get the download URL
+        final downloadUrl = await imageRef.getDownloadURL();
+
+        // Update the state with the image URL
+        setState(() {
+          imageUrl = downloadUrl;
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error uploading image: $e")));
+      }
     }
   }
 
@@ -99,14 +154,19 @@ class _AddJournalPageState extends State<AddJournalPage> {
               TextFormField(
                 controller: placeController,
                 decoration: const InputDecoration(labelText: 'Place Name'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Place name is required' : null,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Place name is required'
+                            : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: budgetController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Budget (Optional)'),
+                decoration: const InputDecoration(
+                  labelText: 'Budget (Optional)',
+                ),
               ),
               const SizedBox(height: 16),
               Row(
@@ -130,8 +190,14 @@ class _AddJournalPageState extends State<AddJournalPage> {
                   DropdownMenuItem(value: 'Happy', child: Text('Happy')),
                   DropdownMenuItem(value: 'Excited', child: Text('Excited')),
                   DropdownMenuItem(value: 'Relaxed', child: Text('Relaxed')),
-                  DropdownMenuItem(value: 'Adventurous', child: Text('Adventurous')),
-                  DropdownMenuItem(value: 'Reflective', child: Text('Reflective')),
+                  DropdownMenuItem(
+                    value: 'Adventurous',
+                    child: Text('Adventurous'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Reflective',
+                    child: Text('Reflective'),
+                  ),
                 ],
                 onChanged: (value) {
                   if (value != null) {
@@ -155,7 +221,11 @@ class _AddJournalPageState extends State<AddJournalPage> {
               if (imageUrl != null && imageUrl!.isNotEmpty)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(imageUrl!, height: 200, fit: BoxFit.cover),
+                  child: Image.network(
+                    imageUrl!,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
