@@ -40,12 +40,15 @@ class JournalFeedPage extends StatelessWidget {
                   final journal = state.journals[index];
                   return ListTile(
                     onTap: () => context.push('/journal/${journal.id}'),
+                    
                     title: Text(journal.placeName),
+            
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text("Id: ${journal.id}"),
                           Text("Mood: ${journal.mood}"),
                           Text("Visited: ${journal.visited ? 'Yes' : 'No'}"),
                           Text("Notes: ${journal.notes}"),

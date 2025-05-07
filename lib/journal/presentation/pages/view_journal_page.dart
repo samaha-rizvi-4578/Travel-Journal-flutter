@@ -1,7 +1,6 @@
-// lib/journal/presentation/pages/view_journal_page.dart
 import 'package:flutter/material.dart';
 import '../../../journal/data/journal_model.dart';
-
+import 'package:go_router/go_router.dart';
 class ViewJournalPage extends StatelessWidget {
   final TravelJournal journal;
 
@@ -16,9 +15,15 @@ class ViewJournalPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              // TODO: Navigate to Edit Journal Page
-              // Navigator.pushNamed(context, '/edit-journal/${journal.id}');
-            },
+  debugPrint("Edit button pressed for journal ID: ${journal.id}");
+  debugPrint("Journal details: $journal");
+
+  // Use GoRouter's context.push to navigate
+  context.push(
+    '/journal/${journal.id}/edit',
+    extra: journal, // Pass the journal object as extra
+  );
+},
           ),
         ],
       ),
@@ -27,21 +32,30 @@ class ViewJournalPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Display the journal image if available
             if (journal.imageUrl != null && journal.imageUrl!.isNotEmpty)
               Hero(
                 tag: 'journal-image-${journal.id}',
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(journal.imageUrl!, height: 200, fit: BoxFit.cover),
+                  child: Image.network(
+                    journal.imageUrl!,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             if (journal.imageUrl != null && journal.imageUrl!.isNotEmpty)
               const SizedBox(height: 16),
+
+            // Display the place name
             Text(
               journal.placeName,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 8),
+
+            // Display the mood
             Row(
               children: [
                 const Icon(Icons.mood, color: Colors.amber),
@@ -53,19 +67,21 @@ class ViewJournalPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
+
+            // Display the notes
             const Text(
               'Notes:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            Text(
-              journal.notes,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            Text(journal.notes, style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 16),
+
+            // Display the visited/wishlist chip
             Chip(
               label: Text(journal.visited ? "Visited" : "Wishlist"),
-              backgroundColor: journal.visited ? Colors.green[200] : Colors.orange[200],
+              backgroundColor:
+                  journal.visited ? Colors.green[200] : Colors.orange[200],
             ),
           ],
         ),

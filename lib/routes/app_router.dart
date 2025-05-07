@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:go_router/go_router.dart'; 
+import 'package:go_router/go_router.dart';
 import './../main.dart';
 
 // Auth
@@ -61,15 +61,16 @@ class AppRouter {
             final journals = (journalBloc.state as JournalLoaded).journals;
             journal = journals.firstWhere(
               (j) => j.id == journalId,
-              orElse: () => TravelJournal(
-                id: '',
-                placeName: 'Unknown',
-                notes: '',
-                mood: '',
-                visited: false,
-                userId: '',
-                createdAt: Timestamp(0, 0),
-              ),
+              orElse:
+                  () => TravelJournal(
+                    id: '',
+                    placeName: 'Unknown',
+                    notes: '',
+                    mood: '',
+                    visited: false,
+                    userId: '',
+                    createdAt: Timestamp(0, 0),
+                  ),
             );
           } else {
             journal = TravelJournal(
@@ -90,36 +91,17 @@ class AppRouter {
         path: '/journal/:id/edit',
         name: 'edit_journal',
         builder: (context, state) {
-          final String? journalId = state.params['id'];
-          final journalBloc = context.read<JournalBloc>();
-          TravelJournal journal;
+          // Use the passed journal object directly
+          final journal = state.extra as TravelJournal;
 
-          if (journalBloc.state is JournalLoaded) {
-            final journals = (journalBloc.state as JournalLoaded).journals; 
-            journal = journals.firstWhere(
-              (j) => j.id == journalId,
-              orElse: () => TravelJournal(
-                id: '',
-                placeName: 'Unknown',
-                notes: '',
-                mood: '',
-                visited: false,
-                userId: '',
-                createdAt: Timestamp(0, 0),
-              ),
-            );
-          } else {
-            journal = TravelJournal(
-              id: '',
-              placeName: 'Unknown',
-              notes: '',
-              mood: '',
-              visited: false,
-              userId: '',
-              createdAt: Timestamp(0, 0),
+          // Ensure the journal object is valid
+          if (journal.id.isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid journal data')),
             );
           }
 
+          // Navigate to the EditJournalPage with the journal
           return EditJournalPage(journal: journal);
         },
       ),
