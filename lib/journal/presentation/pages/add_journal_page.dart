@@ -177,12 +177,23 @@ class _AddJournalPageState extends State<AddJournalPage> {
                 ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: budgetController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Budget (Optional)',
-                ),
-              ),
+  controller: budgetController,
+  keyboardType: TextInputType.number,
+  decoration: const InputDecoration(
+    labelText: 'Budget',
+    suffixText: '\$USD', // Add the currency suffix
+    border: OutlineInputBorder(),
+  ),
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a budget';
+    }
+    if (int.tryParse(value) == null) {
+      return 'Please enter a valid number';
+    }
+    return null;
+  },
+),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

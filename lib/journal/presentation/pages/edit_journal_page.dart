@@ -1,9 +1,13 @@
-// lib/journal/presentation/pages/edit_journal_page.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import './../../../journal/data/journal_model.dart';
 import './../../../journal/data/journal_repository.dart';
 import './../../../shared/utils/image_picker_helper.dart';
+import './../../../country_api/country_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class EditJournalPage extends StatefulWidget {
   final TravelJournal journal;
@@ -15,39 +19,71 @@ class EditJournalPage extends StatefulWidget {
 }
 
 class _EditJournalPageState extends State<EditJournalPage> {
-  late TextEditingController placeController;
   late TextEditingController notesController;
+  late TextEditingController budgetController;
   late String selectedMood;
   late bool visited;
   String? imageUrl;
 
   final ImagePickerHelper _imagePicker = ImagePickerHelper();
+  final CountryService _countryService = CountryService();
+
+  List<Map<String, dynamic>> countries = [];
+  String? selectedCountry;
+  double? selectedLatitude;
+  double? selectedLongitude;
 
   @override
   void initState() {
     super.initState();
     final journal = widget.journal;
-    placeController = TextEditingController(text: journal.placeName);
+
+    // Initialize controllers and fields with existing journal data
     notesController = TextEditingController(text: journal.notes);
+    budgetController = TextEditingController(
+      text: journal.budget != null ? journal.budget.toString() : '',
+    );
     selectedMood = journal.mood;
     visited = journal.visited;
     imageUrl = journal.imageUrl;
+    selectedCountry = journal.placeName;
+    selectedLatitude = journal.latitude;
+    selectedLongitude = journal.longitude;
+
+    _fetchCountries();
   }
 
   @override
   void dispose() {
-    placeController.dispose();
     notesController.dispose();
+    budgetController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchCountries() async {
+    try {
+      final fetchedCountries = await _countryService.fetchCountries();
+      fetchedCountries.sort((a, b) => a['name'].compareTo(b['name'])); // Sort alphabetically
+      setState(() {
+        countries = fetchedCountries;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching countries: $e")),
+      );
+    }
   }
 
   Future<void> _updateJournal(BuildContext context) async {
     final updatedJournal = widget.journal.copyWith(
-      placeName: placeController.text,
+      placeName: selectedCountry,
+      latitude: selectedLatitude,
+      longitude: selectedLongitude,
       notes: notesController.text,
       mood: selectedMood,
       visited: visited,
       imageUrl: imageUrl,
+      budget: int.tryParse(budgetController.text), // Parse budget as integer
     );
 
     try {
@@ -63,9 +99,28 @@ class _EditJournalPageState extends State<EditJournalPage> {
   Future<void> _pickImage(BuildContext context) async {
     final pickedImage = await _imagePicker.pickImageFromGallery();
     if (pickedImage != null) {
-      setState(() {
-        imageUrl = pickedImage;
-      });
+      try {
+        // Upload the image to Firebase Storage
+        final storageRef = FirebaseStorage.instance.ref();
+        final imageRef = storageRef.child(
+          'journal_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+        final uploadTask = await imageRef.putFile(
+          File(pickedImage),
+        );
+
+        // Get the download URL
+        final downloadUrl = await imageRef.getDownloadURL();
+
+        // Update the state with the new image URL
+        setState(() {
+          imageUrl = downloadUrl;
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error uploading image: $e")),
+        );
+      }
     }
   }
 
@@ -85,9 +140,54 @@ class _EditJournalPageState extends State<EditJournalPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
+            if (countries.isEmpty)
+              const Center(child: CircularProgressIndicator())
+            else
+              DropdownSearch<String>(
+                popupProps: PopupProps.menu(
+                  showSearchBox: true, // Enable search functionality
+                  searchFieldProps: TextFieldProps(
+                    decoration: const InputDecoration(
+                      labelText: 'Search Country',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                items: countries.map((country) => country['name'] as String).toList(),
+                selectedItem: selectedCountry,
+                dropdownDecoratorProps: const DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    labelText: 'Country',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                onChanged: (value) {
+                  final country = countries.firstWhere((c) => c['name'] == value);
+                  setState(() {
+                    selectedCountry = country['name'];
+                    selectedLatitude = country['latitude'];
+                    selectedLongitude = country['longitude'];
+                  });
+                },
+              ),
+            const SizedBox(height: 16),
             TextFormField(
-              controller: placeController,
-              decoration: const InputDecoration(labelText: 'Place Name'),
+              controller: budgetController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Budget',
+                suffixText: '\$USD', // Add the currency suffix
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a budget';
+                }
+                if (int.tryParse(value) == null) {
+                  return 'Please enter a valid number';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16),
             Row(
