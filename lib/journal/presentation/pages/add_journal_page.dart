@@ -81,6 +81,7 @@ class _AddJournalPageState extends State<AddJournalPage> {
         createdAt: Timestamp.now(),
         latitude: selectedLatitude,
         longitude: selectedLongitude,
+        budget: int.tryParse(budgetController.text), // Parse budget as integer
       );
 
       try {

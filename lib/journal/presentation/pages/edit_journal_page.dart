@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import './../../../journal/data/journal_model.dart';
 import './../../../journal/data/journal_repository.dart';
 import './../../../shared/utils/image_picker_helper.dart';
-import './../../../country_api/country_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -20,17 +17,13 @@ class EditJournalPage extends StatefulWidget {
 
 class _EditJournalPageState extends State<EditJournalPage> {
   late TextEditingController notesController;
+  late TextEditingController budgetController;
   late String selectedMood;
   late bool visited;
   String? imageUrl;
+  String? selectedCountry;
 
   final ImagePickerHelper _imagePicker = ImagePickerHelper();
-  final CountryService _countryService = CountryService();
-
-  List<Map<String, dynamic>> countries = [];
-  String? selectedCountry;
-  double? selectedLatitude;
-  double? selectedLongitude;
 
   @override
   void initState() {
@@ -39,45 +32,29 @@ class _EditJournalPageState extends State<EditJournalPage> {
 
     // Initialize controllers and fields with existing journal data
     notesController = TextEditingController(text: journal.notes);
+    budgetController = TextEditingController(
+      text: journal.budget != null ? journal.budget.toString() : '',
+    );
     selectedMood = journal.mood;
     visited = journal.visited;
     imageUrl = journal.imageUrl;
     selectedCountry = journal.placeName;
-    selectedLatitude = journal.latitude;
-    selectedLongitude = journal.longitude;
-
-    _fetchCountries();
   }
 
   @override
   void dispose() {
     notesController.dispose();
+    budgetController.dispose();
     super.dispose();
-  }
-
-  Future<void> _fetchCountries() async {
-    try {
-      final fetchedCountries = await _countryService.fetchCountries();
-      fetchedCountries.sort((a, b) => a['name'].compareTo(b['name'])); // Sort alphabetically
-      setState(() {
-        countries = fetchedCountries;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error fetching countries: $e")),
-      );
-    }
   }
 
   Future<void> _updateJournal(BuildContext context) async {
     final updatedJournal = widget.journal.copyWith(
-      placeName: selectedCountry,
-      latitude: selectedLatitude,
-      longitude: selectedLongitude,
       notes: notesController.text,
       mood: selectedMood,
       visited: visited,
       imageUrl: imageUrl,
+      budget: int.tryParse(budgetController.text), // Parse budget as integer
     );
 
     try {
@@ -134,37 +111,39 @@ class _EditJournalPageState extends State<EditJournalPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            if (countries.isEmpty)
-              const Center(child: CircularProgressIndicator())
-            else
-              DropdownSearch<String>(
-                popupProps: PopupProps.menu(
-                  showSearchBox: true, // Enable search functionality
-                  searchFieldProps: TextFieldProps(
-                    decoration: const InputDecoration(
-                      labelText: 'Search Country',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                items: countries.map((country) => country['name'] as String).toList(),
-                selectedItem: selectedCountry,
-                dropdownDecoratorProps: const DropDownDecoratorProps(
-                  dropdownSearchDecoration: InputDecoration(
-                    labelText: 'Country',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                onChanged: (value) {
-                  final country = countries.firstWhere((c) => c['name'] == value);
-                  setState(() {
-                    selectedCountry = country['name'];
-                    selectedLatitude = country['latitude'];
-                    selectedLongitude = country['longitude'];
-                  });
-                },
+            // Display the country as read-only
+            TextFormField(
+              initialValue: selectedCountry,
+              readOnly: true,
+              decoration: const InputDecoration(
+                labelText: 'Country',
+                border: OutlineInputBorder(),
               ),
+            ),
             const SizedBox(height: 16),
+
+            // Editable budget field
+            TextFormField(
+              controller: budgetController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Budget',
+                suffixText: '\$USD', // Add currency suffix
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a budget';
+                }
+                if (int.tryParse(value) == null) {
+                  return 'Please enter a valid number';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Visited toggle
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -180,6 +159,8 @@ class _EditJournalPageState extends State<EditJournalPage> {
               ],
             ),
             const SizedBox(height: 16),
+
+            // Mood dropdown
             DropdownButtonFormField<String>(
               value: selectedMood,
               items: const [
@@ -199,6 +180,8 @@ class _EditJournalPageState extends State<EditJournalPage> {
               decoration: const InputDecoration(labelText: 'Mood'),
             ),
             const SizedBox(height: 16),
+
+            // Notes field
             TextFormField(
               controller: notesController,
               maxLines: 5,
@@ -208,6 +191,8 @@ class _EditJournalPageState extends State<EditJournalPage> {
               ),
             ),
             const SizedBox(height: 24),
+
+            // Display the image if available
             if (imageUrl != null && imageUrl!.isNotEmpty)
               Hero(
                 tag: 'journal-image-${widget.journal.id}',
@@ -217,6 +202,8 @@ class _EditJournalPageState extends State<EditJournalPage> {
                 ),
               ),
             const SizedBox(height: 16),
+
+            // Change image button
             ElevatedButton.icon(
               onPressed: () => _pickImage(context),
               icon: const Icon(Icons.image),

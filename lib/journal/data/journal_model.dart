@@ -1,4 +1,3 @@
-// lib/journal/data/journal_model.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
@@ -11,8 +10,9 @@ class TravelJournal extends Equatable {
   final bool visited;
   final String userId;
   final Timestamp createdAt;
-  final double? latitude;  
-  final double? longitude; 
+  final double? latitude;
+  final double? longitude;
+  final int? budget; // Add budget field
 
   const TravelJournal({
     required this.id,
@@ -25,6 +25,7 @@ class TravelJournal extends Equatable {
     required this.createdAt,
     this.latitude,
     this.longitude,
+    this.budget, // Initialize budget
   });
 
   TravelJournal copyWith({
@@ -38,6 +39,7 @@ class TravelJournal extends Equatable {
     Timestamp? createdAt,
     double? latitude,
     double? longitude,
+    int? budget, // Add budget to copyWith
   }) {
     return TravelJournal(
       id: id ?? this.id,
@@ -50,6 +52,7 @@ class TravelJournal extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      budget: budget ?? this.budget, // Copy budget
     );
   }
 
@@ -63,6 +66,9 @@ class TravelJournal extends Equatable {
         visited,
         userId,
         createdAt,
+        latitude,
+        longitude,
+        budget, // Add budget to props
       ];
 
   factory TravelJournal.fromMap(String id, Map<String, dynamic> map) {
@@ -77,6 +83,7 @@ class TravelJournal extends Equatable {
       createdAt: map['createdAt'] ?? Timestamp.now(),
       latitude: map['latitude'] is num ? map['latitude'].toDouble() : null,
       longitude: map['longitude'] is num ? map['longitude'].toDouble() : null,
+      budget: map['budget'], // Parse budget from map
     );
   }
 
@@ -91,6 +98,7 @@ class TravelJournal extends Equatable {
       'createdAt': createdAt,
       'latitude': latitude,
       'longitude': longitude,
+      'budget': budget, // Add budget to map
     };
   }
 }
