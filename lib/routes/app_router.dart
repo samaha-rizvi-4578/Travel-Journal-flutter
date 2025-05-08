@@ -34,15 +34,15 @@ class AppRouter {
     refreshListenable: GoRouterRefreshStream(authRepo.user),
     initialLocation: '/',
     redirect: (context, state) {
-  final user = authRepo.currentUser;
+      final user = authRepo.currentUser;
 
-  final isLoggingIn = state.subloc == '/';
+      final isLoggingIn = state.subloc == '/';
 
-  if (user == null && !isLoggingIn) return '/';
-  if (user != null && isLoggingIn) return '/home';
+      if (user == null && !isLoggingIn) return '/';
+      if (user != null && isLoggingIn) return '/home';
 
-  return null;
-},
+      return null;
+    },
     routes: [
       GoRoute(
         path: '/',
@@ -104,15 +104,40 @@ class AppRouter {
       ),
 
       // Edit Journal Route
+      // Edit Journal Route
       GoRoute(
         path: '/journal/:id/edit',
         name: 'edit_journal',
         builder: (context, state) {
-          final journal = state.extra as TravelJournal;
+          final String? journalId = state.params['id'];
+          final journalBloc = context.read<JournalBloc>();
 
-          if (journal.id.isEmpty) {
+          TravelJournal? journal;
+
+          if (state.extra is TravelJournal) {
+            journal = state.extra as TravelJournal;
+          }
+
+          if (journal == null && journalBloc.state is JournalLoaded) {
+            final journals = (journalBloc.state as JournalLoaded).journals;
+            journal = journals.firstWhere(
+              (j) => j.id == journalId,
+              orElse:
+                  () => TravelJournal(
+                    id: '',
+                    placeName: 'Unknown',
+                    notes: '',
+                    mood: '',
+                    visited: false,
+                    userId: '',
+                    createdAt: Timestamp(0, 0),
+                  ),
+            );
+          }
+
+          if (journal == null || journal.id.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Invalid journal data')),
+              body: Center(child: Text('Failed to load journal data')),
             );
           }
 
