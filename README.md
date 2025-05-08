@@ -1,5 +1,3 @@
-````markdown
-
 ## 👥 Group Members — **GROUP 7**
 
 1. **Muhammad Tahir** (21k-4503)
@@ -43,7 +41,6 @@
    ```bash
    git clone https://github.com/your-username/travel-journal.git
    cd travel-journal
-````
 
 2. **Install dependencies:**
 
@@ -146,24 +143,31 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## 📸 Screenshots
 
 SignIn
+
 ![ss6](ss6.png)
 
 Login
+
 ![ss1](ss1.png)
 
 Map View 
+
 ![ss2](ss2.png)
 
 Journal Details
+
 ![ss3](ss3.png)
 
 Add Journal
+
 ![ss4](ss4.png)
 
 Edit Journal
+
 ![ss7](ss7.png)
 
 Signout
+
 ![ss8](ss8.png)
 
 ---
