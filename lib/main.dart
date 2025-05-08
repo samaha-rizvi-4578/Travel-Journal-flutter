@@ -13,7 +13,5 @@ void main() async {
   );
 
   final authRepo = AuthRepository();
-  globalAuthRepo = authRepo;
-
   runApp(App(authRepo: authRepo));
 }

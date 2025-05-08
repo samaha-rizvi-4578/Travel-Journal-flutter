@@ -33,20 +33,22 @@ class AppRouter {
   late final GoRouter router = GoRouter(
     refreshListenable: GoRouterRefreshStream(authRepo.user),
     initialLocation: '/',
-    routes: <GoRoute>[
-      // Login Route
+    redirect: (context, state) {
+  final user = authRepo.currentUser;
+
+  final isLoggingIn = state.subloc == '/';
+
+  if (user == null && !isLoggingIn) return '/';
+  if (user != null && isLoggingIn) return '/home';
+
+  return null;
+},
+    routes: [
       GoRoute(
         path: '/',
         name: 'login',
         builder: (context, state) => const LoginScreen(),
-        redirect: (context, state) {
-          final authRepo = globalAuthRepo;
-          final user = authRepo.currentUser;
-          if (user != null) return '/home'; // Redirect to Home Page after login
-          return null;
-        },
       ),
-
       // Home Route
       GoRoute(
         path: '/home',
@@ -74,15 +76,16 @@ class AppRouter {
             final journals = (journalBloc.state as JournalLoaded).journals;
             journal = journals.firstWhere(
               (j) => j.id == journalId,
-              orElse: () => TravelJournal(
-                id: '',
-                placeName: 'Unknown',
-                notes: '',
-                mood: '',
-                visited: false,
-                userId: '',
-                createdAt: Timestamp(0, 0),
-              ),
+              orElse:
+                  () => TravelJournal(
+                    id: '',
+                    placeName: 'Unknown',
+                    notes: '',
+                    mood: '',
+                    visited: false,
+                    userId: '',
+                    createdAt: Timestamp(0, 0),
+                  ),
             );
           } else {
             journal = TravelJournal(
