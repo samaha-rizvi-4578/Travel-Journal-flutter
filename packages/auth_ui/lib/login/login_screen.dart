@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'login_form.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
+import 'package:go_router/go_router.dart'; 
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -28,7 +29,7 @@ class LoginScreen extends StatelessWidget {
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state.status == AuthStatus.authenticated) {
-                Navigator.pushReplacementNamed(context, '/home');
+                Future.microtask(() => GoRouter.of(context).go('/home'));
               } else if (state.status == AuthStatus.unauthenticated) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Login failed. Please try again.')),

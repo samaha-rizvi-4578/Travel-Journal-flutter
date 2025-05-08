@@ -2,6 +2,7 @@ import 'package:auth_ui/auth_ui.dart';
 import 'package:flutter/material.dart';
 import 'signup_form.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/auth_bloc.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
