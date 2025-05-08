@@ -25,15 +25,6 @@ class JournalRepository {
         );
   }
 
-  // Future<void> addJournal(TravelJournal journal) async {
-  //   try {
-  //     await _journalCollection.add(journal.toMap());
-  //   } catch (e) {
-  //     if (kDebugMode) print("Error adding journal: $e");
-  //     rethrow;
-  //   }
-  // }
-
 Future<void> addJournal(TravelJournal journal, {File? imageFile}) async {
   try {
     String? imageUrl;
@@ -42,9 +33,6 @@ Future<void> addJournal(TravelJournal journal, {File? imageFile}) async {
     if (imageFile != null) {
       final storageRef = FirebaseStorage.instance.ref();
       final imageRef = storageRef.child('journal_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-
-      // Upload the image file
-      final uploadTask = await imageRef.putFile(imageFile);
 
       // Get the download URL
       imageUrl = await imageRef.getDownloadURL();

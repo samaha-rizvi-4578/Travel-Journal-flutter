@@ -34,14 +34,13 @@ class _HomePageState extends State<HomePage> {
         children: [
           _buildHomeTab(user?.email ?? 'Guest'),
           _buildJournalsTab(context),
-          _buildLogoutDialog(context), // Show dialog instead of logging out immediately
+          _buildLogoutDialog(context), 
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
           if (index == 2) {
-            // If Logout tab is selected, show confirmation dialog
             _showLogoutDialog(context);
           } else {
             setState(() {
@@ -62,7 +61,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildHomeTab(String email) {
-    print('user email $email');
     return Container(
       color: Colors.teal[50],
       child: Column(

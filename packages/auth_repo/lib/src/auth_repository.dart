@@ -11,17 +11,12 @@ class AuthRepository {
   AuthRepository({firebase.FirebaseAuth? firebaseAuth})
       : _firebaseAuth = firebaseAuth ?? firebase.FirebaseAuth.instance {
     _firebaseAuth.authStateChanges().listen((firebaseUser) async {
-      print('11111111 ${firebaseUser}');
       if (firebaseUser != null) {
-      print('22222222222222');
         final user = User.fromFirebase(firebaseUser);
         _currentUser = user; // cache it
-      print('333333333 ${_currentUser}');
         await _saveUserToLocal(user);
         _userController.add(user);
-      print('44444444444 ${_userController}');
       } else {
-      print('5555555555');
         _currentUser = null;
         await _clearLocalUser();
         _userController.add(null);

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import './../../../journal/data/journal_model.dart';
 import './../../../journal/data/journal_repository.dart';
 import './../../../shared/utils/image_picker_helper.dart';
-import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class EditJournalPage extends StatefulWidget {
@@ -75,9 +74,6 @@ class _EditJournalPageState extends State<EditJournalPage> {
         final storageRef = FirebaseStorage.instance.ref();
         final imageRef = storageRef.child(
           'journal_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
-        );
-        final uploadTask = await imageRef.putFile(
-          File(pickedImage),
         );
 
         // Get the download URL

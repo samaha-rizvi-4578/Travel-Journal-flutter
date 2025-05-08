@@ -1,7 +1,7 @@
-// map_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../../map/bloc/map_event.dart';
 import '../../map/bloc/map_state.dart';
 import '../../map/bloc/map_bloc.dart';
@@ -17,14 +17,14 @@ class MapView extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.read<AuthBloc>().state.user;
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: Text('You must be logged in')),
-      );
+      return const Scaffold(body: Center(child: Text('You must be logged in')));
     }
 
     return BlocProvider(
-      create: (context) => MapBloc(mapService: MapService(context.read<JournalRepository>()))
-        ..add(LoadMapMarkers(userId: user.id)),
+      create:
+          (context) =>
+              MapBloc(mapService: MapService(context.read<JournalRepository>()))
+                ..add(LoadMapMarkers(userId: user.id)),
       child: Scaffold(
         appBar: AppBar(title: const Text('Visited Locations')),
         body: BlocBuilder<MapBloc, MapState>(
@@ -32,7 +32,7 @@ class MapView extends StatelessWidget {
             if (state is MapLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is MapReady && state.markers.isNotEmpty) {
-              return _buildGoogleMap(state.markers);
+              return _buildOpenStreetMap(state.markers);
             } else if (state is MapError) {
               return Center(child: Text('Error loading map: ${state.message}'));
             } else {
@@ -44,38 +44,48 @@ class MapView extends StatelessWidget {
     );
   }
 
-  Widget _buildGoogleMap(List<TravelJournal> journals) {
-    // Create markers only if latitude/longitude exist
-    final markers = journals
-        .where((j) => j.latitude != null && j.longitude != null)
-        .map((j) => Marker(
-              markerId: MarkerId(j.id),
-              position: LatLng(j.latitude!, j.longitude!),
-              infoWindow: InfoWindow(title: j.placeName),
-              onTap: () {
-                // Navigate to journal detail page
-                // Replace this with your navigation logic
-                print("Tapped on ${j.placeName}");
-              },
-            ))
-        .toSet();
+  Widget _buildOpenStreetMap(List<TravelJournal> journals) {
+    final markers =
+        journals
+            .where((j) => j.latitude != null && j.longitude != null)
+            .map(
+              (j) => Marker(
+                width: 80,
+                height: 80,
+                point: LatLng(j.latitude!, j.longitude!),
+                child: GestureDetector(
+                  onTap: () {
+                    print("Tapped on ${j.placeName}");
+                  },
+                  child: const Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                ),
+              ),
+            )
+            .toList();
 
-    // Default fallback camera position
-    final CameraPosition initialCameraPosition = journals.isNotEmpty &&
-            journals[0].latitude != null &&
-            journals[0].longitude != null
-        ? CameraPosition(
-            target: LatLng(journals[0].latitude!, journals[0].longitude!), zoom: 5)
-        : const CameraPosition(target: LatLng(0, 0), zoom: 1);
-
-    return GoogleMap(
-      initialCameraPosition: initialCameraPosition,
-      markers: markers,
-      myLocationEnabled: true,
-      mapType: MapType.normal,
-      compassEnabled: true,
-      scrollGesturesEnabled: true,
-      zoomGesturesEnabled: true,
+    return FlutterMap(
+      options: MapOptions(
+        initialCenter: LatLng(journals.isNotEmpty && journals[0].latitude != null && journals[0].longitude != null
+            ? journals[0].latitude!
+            : 0, 
+            journals.isNotEmpty && journals[0].longitude != null
+            ? journals[0].longitude!
+            : 0),
+        // zoomLevel: journals.isNotEmpty && journals[0].latitude != null && journals[0].longitude != null ? 5 : 1,
+        minZoom: 1,
+        maxZoom: 18,
+      ),
+      children: [
+        TileLayer(
+          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          subdomains: ['a', 'b', 'c'],
+        ),
+        MarkerLayer(markers: markers),
+      ],
     );
   }
 }
