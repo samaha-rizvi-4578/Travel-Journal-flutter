@@ -3,8 +3,9 @@ import 'package:flutter/foundation.dart';
 import '../../journal/data/journal_model.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../domain/journal_repository_interface.dart';
 
-class JournalRepository {
+class JournalRepository implements IJournalRepository{
   final CollectionReference _journalCollection = FirebaseFirestore.instance
       .collection('journals');
 

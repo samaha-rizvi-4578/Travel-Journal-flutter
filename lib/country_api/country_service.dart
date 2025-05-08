@@ -3,15 +3,17 @@ import 'package:http/http.dart' as http;
 
 class CountryService {
   static const String _baseUrl = 'https://restcountries.com/v3.1/all';
+  final http.Client client;
+
+  CountryService({http.Client? client}) : client = client ?? http.Client();
 
   Future<List<Map<String, dynamic>>> fetchCountries() async {
     try {
-      final response = await http.get(Uri.parse(_baseUrl));
+      final response = await client.get(Uri.parse(_baseUrl));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
 
-        // Extract country name, latitude, and longitude
         return data.map((country) {
           final name = country['name']['common'];
           final latlng = country['latlng'];

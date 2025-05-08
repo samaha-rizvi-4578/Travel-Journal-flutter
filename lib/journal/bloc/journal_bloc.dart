@@ -2,9 +2,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../journal/data/journal_repository.dart';
 import '../../journal/bloc/journal_event.dart';
 import '../../journal/bloc/journal_state.dart';
+import '../domain/journal_repository_interface.dart';
 
 class JournalBloc extends Bloc<JournalEvent, JournalState> {
-  final JournalRepository journalRepository;
+  final IJournalRepository journalRepository;
 
   JournalBloc({required this.journalRepository}) : super(JournalInitial()) {
     on<LoadJournals>((event, emit) async {
