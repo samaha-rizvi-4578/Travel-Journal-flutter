@@ -35,6 +35,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.6
+  bloc_test: 10.0.0
   build_runner: ^2.4.15
   flutter_lints: ^5.0.0
 
@@ -49,7 +50,3 @@ flutter:
     - assets/images/logo.png
     - assets/images/logoblack.png
     - assets/images/logowhite.png
-    - assets/images/travel_image.png
-    - assets/images/image1.jpeg
-    - assets/images/image2.jpeg
-    - assets/images/image3.jpg

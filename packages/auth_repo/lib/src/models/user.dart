@@ -4,7 +4,7 @@ class User {
   final String id;
   final String email;
 
-  User({
+  const User({  // Add const constructor
     required this.id,
     required this.email,
   });
