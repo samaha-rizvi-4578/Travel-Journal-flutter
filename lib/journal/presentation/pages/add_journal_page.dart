@@ -61,44 +61,61 @@ class _AddJournalPageState extends State<AddJournalPage> {
   }
 
   Future<void> _submitForm(BuildContext context) async {
-  if (_formKey.currentState!.validate()) {
-    final user = context.read<AuthBloc>().state.user;
-    if (user == null) return;
+    if (_formKey.currentState!.validate()) {
+      final user = context.read<AuthBloc>().state.user;
+      if (user == null) return;
 
-    final newJournal = TravelJournal(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      placeName: selectedCountry ?? '',
-      imageUrl: null,
-      notes: notesController.text,
-      mood: selectedMood,
-      visited: visited,
-      userEmail: user.email,
-      createdAt: Timestamp.now(),
-      latitude: selectedLatitude,
-      longitude: selectedLongitude,
-      budget: int.tryParse(budgetController.text),
-    );
-
-    try {
-      await context.read<JournalRepository>().addJournal(newJournal);
-      context.read<JournalBloc>().reloadJournals(); // Reload the journals
-      Navigator.pop(context); // Go back to the "My Journals" tab
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error saving journal: $e")),
+      final newJournal = TravelJournal(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        placeName: selectedCountry ?? '',
+        imageUrl: null,
+        notes: notesController.text,
+        mood: selectedMood,
+        visited: visited,
+        userEmail: user.email,
+        createdAt: Timestamp.now(),
+        latitude: selectedLatitude,
+        longitude: selectedLongitude,
+        budget: int.tryParse(budgetController.text),
       );
+
+      try {
+        await context.read<JournalRepository>().addJournal(newJournal);
+        context.read<JournalBloc>().reloadJournals(); // Reload the journals
+        Navigator.pop(context); // Go back to the "My Journals" tab
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error saving journal: $e")),
+        );
+      }
     }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New Journal'),
+        title: const Text(
+          'Add New Journal',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: Colors.teal,
         actions: [
           TextButton(
             onPressed: () => _submitForm(context),
-            child: const Text('Save'),
+            child: const Text(
+              'Save',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
           ),
         ],
       ),
@@ -117,6 +134,12 @@ class _AddJournalPageState extends State<AddJournalPage> {
                     searchFieldProps: TextFieldProps(
                       decoration: const InputDecoration(
                         labelText: 'Search Country',
+                        labelStyle: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.teal,
+                        ),
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -126,6 +149,12 @@ class _AddJournalPageState extends State<AddJournalPage> {
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       labelText: 'Country',
+                      labelStyle: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.teal,
+                      ),
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -143,11 +172,19 @@ class _AddJournalPageState extends State<AddJournalPage> {
                       value == null || value.isEmpty ? 'Please select a country' : null,
                 ),
               const SizedBox(height: 16),
+
+              // Budget field
               TextFormField(
                 controller: budgetController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'Budget',
+                  labelStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.teal,
+                  ),
                   suffixText: '\$USD',
                   border: OutlineInputBorder(),
                 ),
@@ -162,12 +199,23 @@ class _AddJournalPageState extends State<AddJournalPage> {
                 },
               ),
               const SizedBox(height: 16),
+
+              // Visited toggle
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Visited'),
+                  const Text(
+                    'Visited',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.teal,
+                    ),
+                  ),
                   Switch(
                     value: visited,
+                    activeColor: Colors.teal,
                     onChanged: (value) {
                       setState(() {
                         visited = value;
@@ -177,6 +225,8 @@ class _AddJournalPageState extends State<AddJournalPage> {
                 ],
               ),
               const SizedBox(height: 16),
+
+              // Mood dropdown
               DropdownButtonFormField<String>(
                 value: selectedMood,
                 items: const [
@@ -193,14 +243,31 @@ class _AddJournalPageState extends State<AddJournalPage> {
                     });
                   }
                 },
-                decoration: const InputDecoration(labelText: 'Mood'),
+                decoration: const InputDecoration(
+                  labelText: 'Mood',
+                  labelStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.teal,
+                  ),
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 16),
+
+              // Notes field
               TextFormField(
                 controller: notesController,
                 maxLines: 5,
                 decoration: const InputDecoration(
                   labelText: 'Notes',
+                  labelStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.teal,
+                  ),
                   border: OutlineInputBorder(),
                 ),
               ),

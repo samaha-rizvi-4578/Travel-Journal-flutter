@@ -48,59 +48,50 @@ class _EditJournalPageState extends State<EditJournalPage> {
     super.dispose();
   }
 
- Future<void> _updateJournal(BuildContext context) async {
-  final updatedJournal = widget.journal.copyWith(
-    notes: notesController.text,
-    mood: selectedMood,
-    visited: visited,
-    budget: int.tryParse(budgetController.text),
-  );
-
-  try {
-    await context.read<JournalRepository>().updateJournal(updatedJournal);
-    context.read<JournalBloc>().reloadJournals(); // Reload the journals
-    Navigator.pop(context); // Go back to the updated journal's details page
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error updating journal: $e")),
+  Future<void> _updateJournal(BuildContext context) async {
+    final updatedJournal = widget.journal.copyWith(
+      notes: notesController.text,
+      mood: selectedMood,
+      visited: visited,
+      budget: int.tryParse(budgetController.text),
     );
+
+    try {
+      await context.read<JournalRepository>().updateJournal(updatedJournal);
+      context.read<JournalBloc>().reloadJournals(); // Reload the journals
+      Navigator.pop(context); // Go back to the updated journal's details page
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error updating journal: $e")),
+      );
+    }
   }
-}
-
-  // Future<void> _pickImage(BuildContext context) async {
-  //   final pickedImage = await _imagePicker.pickImageFromGallery();
-  //   if (pickedImage != null) {
-  //     try {
-  //       // Upload the image to Firebase Storage
-  //       final storageRef = FirebaseStorage.instance.ref();
-  //       final imageRef = storageRef.child(
-  //         'journal_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
-  //       );
-
-  //       // Get the download URL
-  //       final downloadUrl = await imageRef.getDownloadURL();
-
-  //       // Update the state with the new image URL
-  //       setState(() {
-  //         imageUrl = downloadUrl;
-  //       });
-  //     } catch (e) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text("Error uploading image: $e")),
-  //       );
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Journal'),
+        title: const Text(
+          'Edit Journal',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: Colors.teal,
         actions: [
           TextButton(
             onPressed: () => _updateJournal(context),
-            child: const Text('Save'),
+            child: const Text(
+              'Save',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
           ),
         ],
       ),
@@ -114,6 +105,12 @@ class _EditJournalPageState extends State<EditJournalPage> {
               readOnly: true,
               decoration: const InputDecoration(
                 labelText: 'Country',
+                labelStyle: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.teal,
+                ),
                 border: OutlineInputBorder(),
               ),
             ),
@@ -125,18 +122,15 @@ class _EditJournalPageState extends State<EditJournalPage> {
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Budget',
+                labelStyle: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.teal,
+                ),
                 suffixText: '\$USD', // Add currency suffix
                 border: OutlineInputBorder(),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a budget';
-                }
-                if (int.tryParse(value) == null) {
-                  return 'Please enter a valid number';
-                }
-                return null;
-              },
             ),
             const SizedBox(height: 16),
 
@@ -144,9 +138,18 @@ class _EditJournalPageState extends State<EditJournalPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Visited'),
+                const Text(
+                  'Visited',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.teal,
+                  ),
+                ),
                 Switch(
                   value: visited,
+                  activeColor: Colors.teal,
                   onChanged: (value) {
                     setState(() {
                       visited = value;
@@ -174,7 +177,16 @@ class _EditJournalPageState extends State<EditJournalPage> {
                   });
                 }
               },
-              decoration: const InputDecoration(labelText: 'Mood'),
+              decoration: const InputDecoration(
+                labelText: 'Mood',
+                labelStyle: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.teal,
+                ),
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -184,28 +196,34 @@ class _EditJournalPageState extends State<EditJournalPage> {
               maxLines: 5,
               decoration: const InputDecoration(
                 labelText: 'Notes',
+                labelStyle: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.teal,
+                ),
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 24),
 
             // Display the image if available
-            // if (imageUrl != null && imageUrl!.isNotEmpty)
-            //   Hero(
-            //     tag: 'journal-image-${widget.journal.id}',
-            //     child: ClipRRect(
-            //       borderRadius: BorderRadius.circular(12),
-            //       child: Image.network(imageUrl!, height: 200, fit: BoxFit.cover),
-            //     ),
-            //   ),
-            // const SizedBox(height: 16),
+            if (imageUrl != null && imageUrl!.isNotEmpty)
+              Hero(
+                tag: 'journal-image-${widget.journal.id}',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    imageUrl!,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
 
-            // // Change image button
-            // ElevatedButton.icon(
-            //   onPressed: () => _pickImage(context),
-            //   icon: const Icon(Icons.image),
-            //   label: const Text('Change Image'),
-            // ),
+            // Change image button
+            
           ],
         ),
       ),

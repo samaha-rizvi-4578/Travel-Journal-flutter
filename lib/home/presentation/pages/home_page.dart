@@ -26,7 +26,25 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Travel Journal'),
+        title: Row(
+          children: [
+            // Add logo to the AppBar
+            Image.asset(
+              'assets/images/logoWhite.png', // Path to your logo image
+              height: 40,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'Wanderlog',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Colors.teal[700],
       ),
       body: IndexedStack(
@@ -34,7 +52,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           _buildHomeTab(user?.email ?? 'Guest'),
           _buildJournalsTab(context),
-          _buildLogoutDialog(context), 
+          _buildLogoutDialog(context),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -52,9 +70,18 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: Colors.teal[400],
         backgroundColor: Colors.teal[50],
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Journals'),
-          BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Journals',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.logout),
+            label: 'Logout',
+          ),
         ],
       ),
     );
@@ -62,21 +89,26 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildHomeTab(String email) {
     return Container(
+      
       color: Colors.teal[50],
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
               'Welcome, $email!',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.teal[700],
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.teal,
+              ),
             ),
           ),
-          const Expanded(child: MapView()),
+          const Expanded(
+            child: MapView(),
+          ),
         ],
       ),
     );
@@ -91,7 +123,15 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Logging out...'),
+          Text(
+            'Logging out...',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.teal,
+            ),
+          ),
+          SizedBox(height: 16),
           CircularProgressIndicator(),
         ],
       ),
@@ -102,12 +142,35 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Logout"),
-        content: const Text("Are you sure you want to log out?"),
+        title: const Text(
+          "Logout",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.teal,
+          ),
+        ),
+        content: const Text(
+          "Are you sure you want to log out?",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.black87,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: Navigator.of(context).pop,
-            child: const Text("Cancel"),
+            child: const Text(
+              "Cancel",
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: Colors.teal,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -115,7 +178,15 @@ class _HomePageState extends State<HomePage> {
               context.go('/');
               Navigator.of(context).pop(); // Close dialog after logout
             },
-            child: const Text("Logout"),
+            child: const Text(
+              "Logout",
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: Colors.red,
+              ),
+            ),
           ),
         ],
       ),
