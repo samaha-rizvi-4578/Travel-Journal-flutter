@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:go_router/go_router.dart'; // Import GoRouter for navigation
 import '../../map/bloc/map_event.dart';
 import '../../map/bloc/map_state.dart';
 import '../../map/bloc/map_bloc.dart';
@@ -31,7 +32,7 @@ class MapView extends StatelessWidget {
             if (state is MapLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is MapReady && state.markers.isNotEmpty) {
-              return _buildOpenStreetMap(state.markers);
+              return _buildOpenStreetMap(context, state.markers);
             } else if (state is MapError) {
               return Center(child: Text('Error loading map: ${state.message}'));
             } else {
@@ -43,7 +44,7 @@ class MapView extends StatelessWidget {
     );
   }
 
-  Widget _buildOpenStreetMap(List<TravelJournal> journals) {
+  Widget _buildOpenStreetMap(BuildContext context, List<TravelJournal> journals) {
     final markers = journals
         .where((j) => j.latitude != null && j.longitude != null)
         .map(
@@ -53,7 +54,8 @@ class MapView extends StatelessWidget {
             point: LatLng(j.latitude!, j.longitude!),
             child: GestureDetector(
               onTap: () {
-                print("Tapped on ${j.placeName}");
+                // Navigate to the ViewJournalPage for the tapped journal
+                context.push('/journal/${j.id}');
               },
               child: const Icon(
                 Icons.location_on,
