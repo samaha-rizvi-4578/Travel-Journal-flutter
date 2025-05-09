@@ -6,6 +6,7 @@ import 'package:auth_ui/auth_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import './../../../country_api/country_service.dart';
+import './../../../journal/bloc/journal_bloc.dart';
 
 class AddJournalPage extends StatefulWidget {
   const AddJournalPage({super.key});
@@ -60,35 +61,35 @@ class _AddJournalPageState extends State<AddJournalPage> {
   }
 
   Future<void> _submitForm(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      final user = context.read<AuthBloc>().state.user;
-      if (user == null) return;
+  if (_formKey.currentState!.validate()) {
+    final user = context.read<AuthBloc>().state.user;
+    if (user == null) return;
 
-      final newJournal = TravelJournal(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        placeName: selectedCountry ?? '',
-        imageUrl: null,
-        notes: notesController.text,
-        mood: selectedMood,
-        visited: visited,
-        userEmail: user.email,
-        createdAt: Timestamp.now(),
-        latitude: selectedLatitude,
-        longitude: selectedLongitude,
-        budget: int.tryParse(budgetController.text), // Parse budget as integer
+    final newJournal = TravelJournal(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      placeName: selectedCountry ?? '',
+      imageUrl: null,
+      notes: notesController.text,
+      mood: selectedMood,
+      visited: visited,
+      userEmail: user.email,
+      createdAt: Timestamp.now(),
+      latitude: selectedLatitude,
+      longitude: selectedLongitude,
+      budget: int.tryParse(budgetController.text),
+    );
+
+    try {
+      await context.read<JournalRepository>().addJournal(newJournal);
+      context.read<JournalBloc>().reloadJournals(); // Reload the journals
+      Navigator.pop(context); // Go back to the "My Journals" tab
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error saving journal: $e")),
       );
-
-      try {
-        await context.read<JournalRepository>().addJournal(newJournal);
-        Navigator.pop(context);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error saving journal: $e")),
-        );
-      }
     }
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(

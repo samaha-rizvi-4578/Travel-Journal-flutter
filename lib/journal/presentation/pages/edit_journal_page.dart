@@ -4,6 +4,7 @@ import './../../../journal/data/journal_model.dart';
 import './../../../journal/data/journal_repository.dart';
 import './../../../shared/utils/image_picker_helper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import './../../../journal/bloc/journal_bloc.dart';
 
 class EditJournalPage extends StatefulWidget {
   final TravelJournal journal;
@@ -47,24 +48,24 @@ class _EditJournalPageState extends State<EditJournalPage> {
     super.dispose();
   }
 
-  Future<void> _updateJournal(BuildContext context) async {
-    final updatedJournal = widget.journal.copyWith(
-      notes: notesController.text,
-      mood: selectedMood,
-      visited: visited,
-      // imageUrl: imageUrl,
-      budget: int.tryParse(budgetController.text), // Parse budget as integer
-    );
+ Future<void> _updateJournal(BuildContext context) async {
+  final updatedJournal = widget.journal.copyWith(
+    notes: notesController.text,
+    mood: selectedMood,
+    visited: visited,
+    budget: int.tryParse(budgetController.text),
+  );
 
-    try {
-      await context.read<JournalRepository>().updateJournal(updatedJournal);
-      Navigator.pop(context); // Go back to detail page
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error updating journal: $e")),
-      );
-    }
+  try {
+    await context.read<JournalRepository>().updateJournal(updatedJournal);
+    context.read<JournalBloc>().reloadJournals(); // Reload the journals
+    Navigator.pop(context); // Go back to the updated journal's details page
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error updating journal: $e")),
+    );
   }
+}
 
   // Future<void> _pickImage(BuildContext context) async {
   //   final pickedImage = await _imagePicker.pickImageFromGallery();

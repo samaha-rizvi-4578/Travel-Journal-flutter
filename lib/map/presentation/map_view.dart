@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:go_router/go_router.dart'; // Import GoRouter for navigation
 import '../../map/bloc/map_event.dart';
 import '../../map/bloc/map_state.dart';
 import '../../map/bloc/map_bloc.dart';
@@ -21,10 +22,9 @@ class MapView extends StatelessWidget {
     }
 
     return BlocProvider(
-      create:
-          (context) =>
-              MapBloc(mapService: MapService(context.read<JournalRepository>()))
-                ..add(LoadMapMarkers(userId: user.id)),
+      create: (context) => MapBloc(
+        mapService: MapService(context.read<JournalRepository>()),
+      )..add(LoadMapMarkers(userEmail: user.email)), // Pass active user's email
       child: Scaffold(
         appBar: AppBar(title: const Text('Visited Locations')),
         body: BlocBuilder<MapBloc, MapState>(
@@ -32,7 +32,7 @@ class MapView extends StatelessWidget {
             if (state is MapLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is MapReady && state.markers.isNotEmpty) {
-              return _buildOpenStreetMap(state.markers);
+              return _buildOpenStreetMap(context, state.markers);
             } else if (state is MapError) {
               return Center(child: Text('Error loading map: ${state.message}'));
             } else {
@@ -44,38 +44,39 @@ class MapView extends StatelessWidget {
     );
   }
 
-  Widget _buildOpenStreetMap(List<TravelJournal> journals) {
-    final markers =
-        journals
-            .where((j) => j.latitude != null && j.longitude != null)
-            .map(
-              (j) => Marker(
-                width: 80,
-                height: 80,
-                point: LatLng(j.latitude!, j.longitude!),
-                child: GestureDetector(
-                  onTap: () {
-                    print("Tapped on ${j.placeName}");
-                  },
-                  child: const Icon(
-                    Icons.location_on,
-                    color: Colors.red,
-                    size: 40,
-                  ),
-                ),
+  Widget _buildOpenStreetMap(BuildContext context, List<TravelJournal> journals) {
+    final markers = journals
+        .where((j) => j.latitude != null && j.longitude != null)
+        .map(
+          (j) => Marker(
+            width: 80,
+            height: 80,
+            point: LatLng(j.latitude!, j.longitude!),
+            child: GestureDetector(
+              onTap: () {
+                // Navigate to the ViewJournalPage for the tapped journal
+                context.push('/journal/${j.id}');
+              },
+              child: const Icon(
+                Icons.location_on,
+                color: Colors.red,
+                size: 40,
               ),
-            )
-            .toList();
+            ),
+          ),
+        )
+        .toList();
 
     return FlutterMap(
       options: MapOptions(
-        initialCenter: LatLng(journals.isNotEmpty && journals[0].latitude != null && journals[0].longitude != null
-            ? journals[0].latitude!
-            : 0, 
-            journals.isNotEmpty && journals[0].longitude != null
-            ? journals[0].longitude!
-            : 0),
-        // zoomLevel: journals.isNotEmpty && journals[0].latitude != null && journals[0].longitude != null ? 5 : 1,
+        initialCenter: LatLng(
+          journals.isNotEmpty && journals[0].latitude != null
+              ? journals[0].latitude!
+              : 0,
+          journals.isNotEmpty && journals[0].longitude != null
+              ? journals[0].longitude!
+              : 0,
+        ),
         minZoom: 1,
         maxZoom: 18,
       ),

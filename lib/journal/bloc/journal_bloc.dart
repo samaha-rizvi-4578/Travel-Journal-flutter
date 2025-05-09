@@ -17,4 +17,8 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       }
     });
   }
+
+  Future<void> reloadJournals() async {
+    add(LoadJournals());
+  }
 }
