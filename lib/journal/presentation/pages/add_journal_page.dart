@@ -71,7 +71,7 @@ class _AddJournalPageState extends State<AddJournalPage> {
         notes: notesController.text,
         mood: selectedMood,
         visited: visited,
-        userId: user.id,
+        userEmail: user.email,
         createdAt: Timestamp.now(),
         latitude: selectedLatitude,
         longitude: selectedLongitude,
