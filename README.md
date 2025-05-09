@@ -144,31 +144,35 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 SignIn
 
-![ss6](ss6.png)
+![alt text](image-9.png)
 
 Login
 
-![ss1](ss1.png)
+![alt text](image-1.png)
 
 Map View 
 
-![ss2](ss2.png)
+![alt text](image-2.png)
 
+Feed 
+![alt text](image-5.png)
+
+My Journals
+![alt text](image-6.png)
 Journal Details
 
-![ss3](ss3.png)
-
+![alt text](image-3.png)
 Add Journal
 
-![ss4](ss4.png)
+![alt text](image-7.png)
 
 Edit Journal
 
-![ss7](ss7.png)
+![alt text](image-4.png)
 
 Signout
 
-![ss8](ss8.png)
+![alt text](image-8.png)
 
 ---
 
