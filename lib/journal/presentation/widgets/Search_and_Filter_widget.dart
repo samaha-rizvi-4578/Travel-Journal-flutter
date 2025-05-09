@@ -25,10 +25,29 @@ class _SearchAndFilterWidgetState extends State<SearchAndFilterWidget> {
         // Search Field
         Expanded(
           child: TextField(
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Search...',
-              prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(),
+              hintStyle: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+              prefixIcon: const Icon(Icons.search, color: Colors.teal),
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.teal),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.teal),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.orange, width: 2),
+              ),
             ),
             onChanged: widget.onSearch,
           ),
@@ -36,23 +55,83 @@ class _SearchAndFilterWidgetState extends State<SearchAndFilterWidget> {
         const SizedBox(width: 8),
 
         // Filter Dropdown
-        DropdownButton<String>(
-          value: selectedFilter,
-          items: const [
-            DropdownMenuItem(value: 'None', child: Text('No Filter')),
-            DropdownMenuItem(value: 'Budget', child: Text('Budget')),
-            DropdownMenuItem(value: 'Visited', child: Text('Visited')),
-            DropdownMenuItem(value: 'Wishlist', child: Text('Wishlist')),
-            DropdownMenuItem(value: 'Alphabetical', child: Text('Alphabetical')),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              setState(() {
-                selectedFilter = value;
-              });
-              widget.onFilter(value);
-            }
-          },
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.teal),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButton<String>(
+            value: selectedFilter,
+            underline: const SizedBox(), // Remove default underline
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.teal),
+            items: const [
+              DropdownMenuItem(
+                value: 'None',
+                child: Text(
+                  'No Filter',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'Budget',
+                child: Text(
+                  'Budget',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'Visited',
+                child: Text(
+                  'Visited',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'Wishlist',
+                child: Text(
+                  'Wishlist',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'Alphabetical',
+                child: Text(
+                  'Alphabetical',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  selectedFilter = value;
+                });
+                widget.onFilter(value);
+              }
+            },
+          ),
         ),
       ],
     );

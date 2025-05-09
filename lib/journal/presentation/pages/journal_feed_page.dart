@@ -33,8 +33,15 @@ class _JournalFeedPageState extends State<JournalFeedPage> {
         )..add(LoadJournals()),
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Travel Journals'),
+            backgroundColor: Colors.teal,
             bottom: const TabBar(
+              indicatorColor: Colors.orange,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              labelStyle: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+              ),
               tabs: [
                 Tab(text: 'FEED'),
                 Tab(text: 'My Journals'),
@@ -97,36 +104,102 @@ class _JournalFeedPageState extends State<JournalFeedPage> {
                           }
 
                           if (journals.isEmpty) {
-                            return const Center(child: Text('No journals found.'));
+                            return const Center(
+                              child: Text(
+                                'No journals found.',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            );
                           }
 
                           return ListView.builder(
                             itemCount: journals.length,
                             itemBuilder: (context, index) {
                               final journal = journals[index];
-                              return ListTile(
-                                onTap: () => context.push('/journal/${journal.id}'),
-                                title: Text(journal.placeName),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Created By: ${journal.userEmail}"),
-                                      Text("Budget: ${journal.budget ?? 'N/A'}"),
-                                      Text("Visited: ${journal.visited ? 'Yes' : 'No'}"),
-                                    ],
-                                  ),
+                              return Card(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                trailing: const Icon(Icons.arrow_forward_ios),
-                                isThreeLine: true,
+                                elevation: 4,
+                                child: ListTile(
+                                  onTap: () => context.push('/journal/${journal.id}'),
+                                  title: Text(
+                                    journal.placeName,
+                                    style: const TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Created By: ${journal.userEmail}",
+                                          style: const TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Budget: ${journal.budget ?? 'N/A'}",
+                                          style: const TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Visited: ${journal.visited ? 'Yes' : 'No'}",
+                                          style: const TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  trailing: const Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.teal,
+                                  ),
+                                  isThreeLine: true,
+                                ),
                               );
                             },
                           );
                         } else if (state is JournalError) {
-                          return Center(child: Text('Error: ${state.message}'));
+                          return Center(
+                            child: Text(
+                              'Error: ${state.message}',
+                              style: const TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 18,
+                                color: Colors.red,
+                              ),
+                            ),
+                          );
                         }
-                        return const Center(child: Text('Fetching journals...'));
+                        return const Center(
+                          child: Text(
+                            'Fetching journals...',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 18,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -136,7 +209,15 @@ class _JournalFeedPageState extends State<JournalFeedPage> {
               // My Journals Tab
               Scaffold(
                 appBar: AppBar(
-                  title: const Text('My Journals'),
+                  title: const Text(
+                    'My Journals',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
+                  ),
+                  backgroundColor: Colors.teal,
                   actions: [
                     IconButton(
                       icon: const Icon(Icons.add),
@@ -198,36 +279,102 @@ class _JournalFeedPageState extends State<JournalFeedPage> {
                             }
 
                             if (myJournals.isEmpty) {
-                              return const Center(child: Text('No journals found.'));
+                              return const Center(
+                                child: Text(
+                                  'No journals found.',
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 18,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              );
                             }
 
                             return ListView.builder(
                               itemCount: myJournals.length,
                               itemBuilder: (context, index) {
                                 final journal = myJournals[index];
-                                return ListTile(
-                                  onTap: () => context.push('/journal/${journal.id}'),
-                                  title: Text(journal.placeName),
-                                  subtitle: Padding(
-                                    padding: const EdgeInsets.only(top: 4),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text("Budget: ${journal.budget ?? 'N/A'}"),
-                                        Text("Visited: ${journal.visited ? 'Yes' : 'No'}"),
-                                        Text("Notes: ${journal.notes}"),
-                                      ],
-                                    ),
+                                return Card(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  trailing: const Icon(Icons.arrow_forward_ios),
-                                  isThreeLine: true,
+                                  elevation: 4,
+                                  child: ListTile(
+                                    onTap: () => context.push('/journal/${journal.id}'),
+                                    title: Text(
+                                      journal.placeName,
+                                      style: const TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    subtitle: Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Budget: ${journal.budget ?? 'N/A'}",
+                                            style: const TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Visited: ${journal.visited ? 'Yes' : 'No'}",
+                                            style: const TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Notes: ${journal.notes}",
+                                            style: const TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    trailing: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.teal,
+                                    ),
+                                    isThreeLine: true,
+                                  ),
                                 );
                               },
                             );
                           } else if (state is JournalError) {
-                            return Center(child: Text('Error: ${state.message}'));
+                            return Center(
+                              child: Text(
+                                'Error: ${state.message}',
+                                style: const TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 18,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            );
                           }
-                          return const Center(child: Text('Fetching journals...'));
+                          return const Center(
+                            child: Text(
+                              'Fetching journals...',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          );
                         },
                       ),
                     ),

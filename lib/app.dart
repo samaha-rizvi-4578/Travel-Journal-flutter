@@ -67,9 +67,23 @@ class _AppState extends State<App> {
         ],
         child: MaterialApp.router(
           routerConfig: AppRouter(widget.authRepo).router,
-          title: 'Travel Journal',
+          title: 'WanderLog',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData.light(useMaterial3: true),
+          theme: ThemeData.light(useMaterial3: true).copyWith(
+            appBarTheme: AppBarTheme(
+              backgroundColor: Colors.teal[700],
+              titleTextStyle: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.white,
+              ),
+              iconTheme: const IconThemeData(color: Colors.white),
+              centerTitle: true,
+              toolbarHeight: 60,
+              titleSpacing: 0,
+            ),
+          ),
         ),
       ),
     );
