@@ -77,18 +77,6 @@ class ViewJournalPage extends StatelessWidget {
               backgroundColor:
                   journal.visited ? Colors.green[200] : Colors.orange[200],
             ),
-            const SizedBox(height: 16),
-
-            // Display the user email
-            const Text(
-              'Created By:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              journal.userEmail,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
           ],
         ),
       ),

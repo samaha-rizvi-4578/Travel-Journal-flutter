@@ -48,7 +48,7 @@ class JournalFeedPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Id: ${journal.id}"),
+                          Text("Created By: ${journal.userEmail}"),
                           Text("Mood: ${journal.mood}"),
                           Text("Visited: ${journal.visited ? 'Yes' : 'No'}"),
                           Text("Notes: ${journal.notes}"),

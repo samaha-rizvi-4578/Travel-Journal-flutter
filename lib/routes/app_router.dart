@@ -83,7 +83,7 @@ class AppRouter {
                     notes: '',
                     mood: '',
                     visited: false,
-                    userId: '',
+                    userEmail: '',
                     createdAt: Timestamp(0, 0),
                   ),
             );
@@ -94,7 +94,7 @@ class AppRouter {
               notes: '',
               mood: '',
               visited: false,
-              userId: '',
+              userEmail: '',
               createdAt: Timestamp(0, 0),
             );
           }
@@ -129,7 +129,7 @@ class AppRouter {
                     notes: '',
                     mood: '',
                     visited: false,
-                    userId: '',
+                    userEmail: '',
                     createdAt: Timestamp(0, 0),
                   ),
             );

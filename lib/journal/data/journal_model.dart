@@ -8,11 +8,11 @@ class TravelJournal extends Equatable {
   final String notes;
   final String mood;
   final bool visited;
-  final String userId;
+  final String userEmail; // Replace userId with userEmail
   final Timestamp createdAt;
   final double? latitude;
   final double? longitude;
-  final int? budget; // Add budget field
+  final int? budget;
 
   const TravelJournal({
     required this.id,
@@ -21,11 +21,11 @@ class TravelJournal extends Equatable {
     required this.notes,
     required this.mood,
     required this.visited,
-    required this.userId,
+    required this.userEmail, // Initialize userEmail
     required this.createdAt,
     this.latitude,
     this.longitude,
-    this.budget, // Initialize budget
+    this.budget,
   });
 
   TravelJournal copyWith({
@@ -35,11 +35,11 @@ class TravelJournal extends Equatable {
     String? notes,
     String? mood,
     bool? visited,
-    String? userId,
+    String? userEmail, // Replace userId with userEmail
     Timestamp? createdAt,
     double? latitude,
     double? longitude,
-    int? budget, // Add budget to copyWith
+    int? budget,
   }) {
     return TravelJournal(
       id: id ?? this.id,
@@ -48,11 +48,11 @@ class TravelJournal extends Equatable {
       notes: notes ?? this.notes,
       mood: mood ?? this.mood,
       visited: visited ?? this.visited,
-      userId: userId ?? this.userId,
+      userEmail: userEmail ?? this.userEmail, // Copy userEmail
       createdAt: createdAt ?? this.createdAt,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
-      budget: budget ?? this.budget, // Copy budget
+      budget: budget ?? this.budget,
     );
   }
 
@@ -64,11 +64,11 @@ class TravelJournal extends Equatable {
         notes,
         mood,
         visited,
-        userId,
+        userEmail, // Replace userId with userEmail
         createdAt,
         latitude,
         longitude,
-        budget, // Add budget to props
+        budget,
       ];
 
   factory TravelJournal.fromMap(String id, Map<String, dynamic> map) {
@@ -79,11 +79,11 @@ class TravelJournal extends Equatable {
       notes: map['notes'] ?? '',
       mood: map['mood'] ?? '',
       visited: map['visited'] ?? false,
-      userId: map['userId'] ?? '',
+      userEmail: map['userEmail'] ?? '', // Replace userId with userEmail
       createdAt: map['createdAt'] ?? Timestamp.now(),
       latitude: map['latitude'] is num ? map['latitude'].toDouble() : null,
       longitude: map['longitude'] is num ? map['longitude'].toDouble() : null,
-      budget: map['budget'], // Parse budget from map
+      budget: map['budget'],
     );
   }
 
@@ -94,11 +94,11 @@ class TravelJournal extends Equatable {
       'notes': notes,
       'mood': mood,
       'visited': visited,
-      'userId': userId,
+      'userEmail': userEmail, // Replace userId with userEmail
       'createdAt': createdAt,
       'latitude': latitude,
       'longitude': longitude,
-      'budget': budget, // Add budget to map
+      'budget': budget,
     };
   }
 }
