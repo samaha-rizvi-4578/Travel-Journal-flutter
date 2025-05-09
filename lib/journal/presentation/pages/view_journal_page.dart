@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import '../../../journal/data/journal_model.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,16 +10,21 @@ class ViewJournalPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch the logged-in user's email
+    final String? activeUserEmail = FirebaseAuth.instance.currentUser?.email;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Journal Details'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              context.pushNamed('edit_journal', params: {'id': journal.id});
-            },
-          ),
+          // Show the edit button only if the logged-in user is the creator
+          if (journal.userEmail == activeUserEmail)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () {
+                context.pushNamed('edit_journal', params: {'id': journal.id});
+              },
+            ),
         ],
       ),
       body: Padding(
