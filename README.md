@@ -1,27 +1,49 @@
 ## 👥 Group Members — **GROUP 7**
 
-1. **Muhammad Tahir** (21k-4503)
-2. **Syeda Samaha Batool Rizvi** (21k-4578)
-3. **Insha Javed** (21k-3279)
-4. **Muhammad Umer** (21k-3219)
+1. **Muhammad Tahir** (21k-4503)  
+2. **Syeda Samaha Batool Rizvi** (21k-4578)  
+3. **Insha Javed** (21k-3279)  
+4. **Muhammad Umer** (21k-3219)  
 
 ---
 
-# Travel Journal
+# 🧭 Travel Journal
 
-**Travel Journal** is a Flutter application designed to help users document and share their travel experiences. The app allows users to create, edit, and view travel journals, complete with images, notes, moods, and location data. It also integrates with Firebase for data storage and authentication, and provides a map view to visualize visited locations.
+**Travel Journal** is a Flutter application designed to help users document and share their travel experiences. The app allows users to create, edit, and view travel journals, complete with notes, moods, and location data. It integrates with Firebase for data storage and authentication and provides a map view to visualize visited locations.
 
 ---
 
 ## ✨ Features
 
-- **Add New Journals**: Users can create new travel journals by providing details such as the place name, mood, notes, budget, and whether the location has been visited.
-- **Edit Journals**: Existing journals can be updated with new information, including uploading images.
-- **View Journals**: Users can view detailed information about their travel journals, including images, notes, and location data.
-- **Map Integration**: Visualize visited locations on a map.
-- **Firebase Integration**: Journals are stored in Firebase Firestore, and images are uploaded to Firebase Storage.
-- **Authentication**: User authentication is handled via Firebase Authentication.
-- **Offline Support**: Journals can be accessed offline with cached data.
+- **📰 Journals Feed**  
+  View journals created by other users. Apply filters or search to find specific entries.
+
+- **📓 My Journals**  
+  View your own journals and organize them with filters or search.
+
+- **➕ Add New Journals**  
+  Create a travel journal with details like location, budget, mood, and notes.
+
+- **✏️ Edit Journals**  
+  Update your journals anytime with new information or experiences.
+
+- **🗑️ Delete Journals**  
+  Remove journals you no longer want to keep.
+
+- **🔍 View Journal Details**  
+  Dive deep into your journal’s data including notes, mood, and budget.
+
+- **🗺️ Map Integration**  
+  Visualize visited locations using interactive maps.
+
+- **🔥 Firebase Integration**  
+  Journals and authentication are handled securely using Firebase Firestore and Auth.
+
+- **🔐 Authentication**  
+  Secure login and registration using Firebase Authentication.
+
+- **📴 Offline Support**  
+  Cached data allows journal access even without an internet connection.
 
 ---
 
@@ -29,10 +51,11 @@
 
 ### ✅ Prerequisites
 
-- Flutter SDK (version 3.7.2 or higher)
-- Firebase project configured with Firestore, Storage, and Authentication
-- Android Studio or Visual Studio Code
-- A physical or virtual device for testing
+- Flutter SDK (v3.7.2 or later)  
+- Firebase Project with Firestore, Storage, and Auth configured  
+- Android Studio / VS Code  
+- Emulator or physical device
+
 
 ### 📦 Installation
 
