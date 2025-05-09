@@ -52,7 +52,7 @@ class _EditJournalPageState extends State<EditJournalPage> {
       notes: notesController.text,
       mood: selectedMood,
       visited: visited,
-      imageUrl: imageUrl,
+      // imageUrl: imageUrl,
       budget: int.tryParse(budgetController.text), // Parse budget as integer
     );
 
@@ -66,30 +66,30 @@ class _EditJournalPageState extends State<EditJournalPage> {
     }
   }
 
-  Future<void> _pickImage(BuildContext context) async {
-    final pickedImage = await _imagePicker.pickImageFromGallery();
-    if (pickedImage != null) {
-      try {
-        // Upload the image to Firebase Storage
-        final storageRef = FirebaseStorage.instance.ref();
-        final imageRef = storageRef.child(
-          'journal_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
-        );
+  // Future<void> _pickImage(BuildContext context) async {
+  //   final pickedImage = await _imagePicker.pickImageFromGallery();
+  //   if (pickedImage != null) {
+  //     try {
+  //       // Upload the image to Firebase Storage
+  //       final storageRef = FirebaseStorage.instance.ref();
+  //       final imageRef = storageRef.child(
+  //         'journal_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
+  //       );
 
-        // Get the download URL
-        final downloadUrl = await imageRef.getDownloadURL();
+  //       // Get the download URL
+  //       final downloadUrl = await imageRef.getDownloadURL();
 
-        // Update the state with the new image URL
-        setState(() {
-          imageUrl = downloadUrl;
-        });
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error uploading image: $e")),
-        );
-      }
-    }
-  }
+  //       // Update the state with the new image URL
+  //       setState(() {
+  //         imageUrl = downloadUrl;
+  //       });
+  //     } catch (e) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text("Error uploading image: $e")),
+  //       );
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -189,22 +189,22 @@ class _EditJournalPageState extends State<EditJournalPage> {
             const SizedBox(height: 24),
 
             // Display the image if available
-            if (imageUrl != null && imageUrl!.isNotEmpty)
-              Hero(
-                tag: 'journal-image-${widget.journal.id}',
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(imageUrl!, height: 200, fit: BoxFit.cover),
-                ),
-              ),
-            const SizedBox(height: 16),
+            // if (imageUrl != null && imageUrl!.isNotEmpty)
+            //   Hero(
+            //     tag: 'journal-image-${widget.journal.id}',
+            //     child: ClipRRect(
+            //       borderRadius: BorderRadius.circular(12),
+            //       child: Image.network(imageUrl!, height: 200, fit: BoxFit.cover),
+            //     ),
+            //   ),
+            // const SizedBox(height: 16),
 
-            // Change image button
-            ElevatedButton.icon(
-              onPressed: () => _pickImage(context),
-              icon: const Icon(Icons.image),
-              label: const Text('Change Image'),
-            ),
+            // // Change image button
+            // ElevatedButton.icon(
+            //   onPressed: () => _pickImage(context),
+            //   icon: const Icon(Icons.image),
+            //   label: const Text('Change Image'),
+            // ),
           ],
         ),
       ),
