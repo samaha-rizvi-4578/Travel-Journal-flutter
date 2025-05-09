@@ -165,35 +165,39 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ## 📸 Screenshots
 
-SignIn
+### SignIn
 
 ![alt text](image-9.png)
 
-Login
+### Login
 
 ![alt text](image-1.png)
 
-Map View 
+### Map View 
 
 ![alt text](image-2.png)
 
-Feed 
+### Feed 
+
 ![alt text](image-5.png)
 
-My Journals
+### My Journals
+
 ![alt text](image-6.png)
-Journal Details
+
+### Journal Details
 
 ![alt text](image-3.png)
-Add Journal
+
+### Add Journal
 
 ![alt text](image-7.png)
 
-Edit Journal
+### Edit Journal
 
 ![alt text](image-4.png)
 
-Signout
+### Signout
 
 ![alt text](image-8.png)
 
