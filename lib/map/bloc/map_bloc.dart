@@ -10,7 +10,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<LoadMapMarkers>((event, emit) async {
       emit(MapLoading());
       try {
-        final journals = await mapService.getVisitedJournalsWithLocation(event.userId).first;
+        // Fetch journals visited by the active user
+        final journals = await mapService.getVisitedJournalsWithLocation(event.userEmail).first;
         emit(MapReady(journals));
       } catch (e) {
         emit(MapError(e.toString()));

@@ -6,8 +6,15 @@ class MapService {
 
   MapService(this._journalRepo);
 
-  Stream<List<TravelJournal>> getVisitedJournalsWithLocation(String userId) {
+  // Fetch journals marked as visited by the active user
+  Stream<List<TravelJournal>> getVisitedJournalsWithLocation(String userEmail) {
     return _journalRepo.getPublicJournals().map((journals) =>
-        journals.where((j) => j.visited && j.latitude != null && j.longitude != null).toList());
+        journals
+            .where((j) =>
+                j.visited &&
+                j.userEmail == userEmail && // Filter by active user's email
+                j.latitude != null &&
+                j.longitude != null)
+            .toList());
   }
 }

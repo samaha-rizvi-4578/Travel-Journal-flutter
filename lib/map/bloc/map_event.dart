@@ -5,10 +5,10 @@ abstract class MapEvent extends Equatable {
 }
 
 class LoadMapMarkers extends MapEvent {
-  final String userId;
+  final String userEmail; // Use userEmail instead of userId
 
-  const LoadMapMarkers({required this.userId});
+  const LoadMapMarkers({required this.userEmail});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userEmail];
 }

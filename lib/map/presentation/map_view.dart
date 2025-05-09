@@ -21,10 +21,9 @@ class MapView extends StatelessWidget {
     }
 
     return BlocProvider(
-      create:
-          (context) =>
-              MapBloc(mapService: MapService(context.read<JournalRepository>()))
-                ..add(LoadMapMarkers(userId: user.id)),
+      create: (context) => MapBloc(
+        mapService: MapService(context.read<JournalRepository>()),
+      )..add(LoadMapMarkers(userEmail: user.email)), // Pass active user's email
       child: Scaffold(
         appBar: AppBar(title: const Text('Visited Locations')),
         body: BlocBuilder<MapBloc, MapState>(
@@ -45,37 +44,37 @@ class MapView extends StatelessWidget {
   }
 
   Widget _buildOpenStreetMap(List<TravelJournal> journals) {
-    final markers =
-        journals
-            .where((j) => j.latitude != null && j.longitude != null)
-            .map(
-              (j) => Marker(
-                width: 80,
-                height: 80,
-                point: LatLng(j.latitude!, j.longitude!),
-                child: GestureDetector(
-                  onTap: () {
-                    print("Tapped on ${j.placeName}");
-                  },
-                  child: const Icon(
-                    Icons.location_on,
-                    color: Colors.red,
-                    size: 40,
-                  ),
-                ),
+    final markers = journals
+        .where((j) => j.latitude != null && j.longitude != null)
+        .map(
+          (j) => Marker(
+            width: 80,
+            height: 80,
+            point: LatLng(j.latitude!, j.longitude!),
+            child: GestureDetector(
+              onTap: () {
+                print("Tapped on ${j.placeName}");
+              },
+              child: const Icon(
+                Icons.location_on,
+                color: Colors.red,
+                size: 40,
               ),
-            )
-            .toList();
+            ),
+          ),
+        )
+        .toList();
 
     return FlutterMap(
       options: MapOptions(
-        initialCenter: LatLng(journals.isNotEmpty && journals[0].latitude != null && journals[0].longitude != null
-            ? journals[0].latitude!
-            : 0, 
-            journals.isNotEmpty && journals[0].longitude != null
-            ? journals[0].longitude!
-            : 0),
-        // zoomLevel: journals.isNotEmpty && journals[0].latitude != null && journals[0].longitude != null ? 5 : 1,
+        initialCenter: LatLng(
+          journals.isNotEmpty && journals[0].latitude != null
+              ? journals[0].latitude!
+              : 0,
+          journals.isNotEmpty && journals[0].longitude != null
+              ? journals[0].longitude!
+              : 0,
+        ),
         minZoom: 1,
         maxZoom: 18,
       ),
