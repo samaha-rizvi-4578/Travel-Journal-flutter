@@ -134,92 +134,105 @@ class _JournalFeedPageState extends State<JournalFeedPage> {
               ),
 
               // My Journals Tab
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SearchAndFilterWidget(
-                      onSearch: (query) {
-                        setState(() {
-                          searchQuery = query;
-                        });
-                      },
-                      onFilter: (filter) {
-                        setState(() {
-                          filterOption = filter;
-                        });
+              Scaffold(
+                appBar: AppBar(
+                  title: const Text('My Journals'),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        context.push('/add-journal'); // Navigate to AddJournalPage
                       },
                     ),
-                  ),
-                  Expanded(
-                    child: BlocBuilder<JournalBloc, JournalState>(
-                      builder: (context, state) {
-                        if (state is JournalLoading) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (state is JournalLoaded) {
-                          var myJournals = state.journals
-                              .where((journal) => journal.userEmail == userEmail) // Use logged-in user's email
-                              .toList();
-
-                          // Apply Search
-                          if (searchQuery.isNotEmpty) {
-                            myJournals = myJournals
-                                .where((journal) =>
-                                    journal.placeName
-                                        .toLowerCase()
-                                        .contains(searchQuery.toLowerCase()))
+                  ],
+                ),
+                body: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SearchAndFilterWidget(
+                        onSearch: (query) {
+                          setState(() {
+                            searchQuery = query;
+                          });
+                        },
+                        onFilter: (filter) {
+                          setState(() {
+                            filterOption = filter;
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: BlocBuilder<JournalBloc, JournalState>(
+                        builder: (context, state) {
+                          if (state is JournalLoading) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (state is JournalLoaded) {
+                            var myJournals = state.journals
+                                .where((journal) => journal.userEmail == userEmail) // Use logged-in user's email
                                 .toList();
-                          }
 
-                          // Apply Filter
-                          if (filterOption == 'Budget') {
-                            myJournals = myJournals
-                                .where((journal) => journal.budget != null)
-                                .toList();
-                            myJournals.sort((a, b) => (a.budget ?? 0).compareTo(b.budget ?? 0));
-                          } else if (filterOption == 'Visited') {
-                            myJournals = myJournals.where((journal) => journal.visited).toList();
-                          } else if (filterOption == 'Wishlist') {
-                            myJournals = myJournals.where((journal) => !journal.visited).toList();
-                          } else if (filterOption == 'Alphabetical') {
-                            myJournals.sort((a, b) => a.placeName.compareTo(b.placeName));
-                          }
+                            // Apply Search
+                            if (searchQuery.isNotEmpty) {
+                              myJournals = myJournals
+                                  .where((journal) =>
+                                      journal.placeName
+                                          .toLowerCase()
+                                          .contains(searchQuery.toLowerCase()))
+                                  .toList();
+                            }
 
-                          if (myJournals.isEmpty) {
-                            return const Center(child: Text('No journals found.'));
-                          }
+                            // Apply Filter
+                            if (filterOption == 'Budget') {
+                              myJournals = myJournals
+                                  .where((journal) => journal.budget != null)
+                                  .toList();
+                              myJournals.sort((a, b) => (a.budget ?? 0).compareTo(b.budget ?? 0));
+                            } else if (filterOption == 'Visited') {
+                              myJournals = myJournals.where((journal) => journal.visited).toList();
+                            } else if (filterOption == 'Wishlist') {
+                              myJournals = myJournals.where((journal) => !journal.visited).toList();
+                            } else if (filterOption == 'Alphabetical') {
+                              myJournals.sort((a, b) => a.placeName.compareTo(b.placeName));
+                            }
 
-                          return ListView.builder(
-                            itemCount: myJournals.length,
-                            itemBuilder: (context, index) {
-                              final journal = myJournals[index];
-                              return ListTile(
-                                onTap: () => context.push('/journal/${journal.id}'),
-                                title: Text(journal.placeName),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Budget: ${journal.budget ?? 'N/A'}"),
-                                      Text("Visited: ${journal.visited ? 'Yes' : 'No'}"),
-                                      Text("Notes: ${journal.notes}"),
-                                    ],
+                            if (myJournals.isEmpty) {
+                              return const Center(child: Text('No journals found.'));
+                            }
+
+                            return ListView.builder(
+                              itemCount: myJournals.length,
+                              itemBuilder: (context, index) {
+                                final journal = myJournals[index];
+                                return ListTile(
+                                  onTap: () => context.push('/journal/${journal.id}'),
+                                  title: Text(journal.placeName),
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Budget: ${journal.budget ?? 'N/A'}"),
+                                        Text("Visited: ${journal.visited ? 'Yes' : 'No'}"),
+                                        Text("Notes: ${journal.notes}"),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                trailing: const Icon(Icons.arrow_forward_ios),
-                                isThreeLine: true,
-                              );
-                            },
-                          );
-                        } else if (state is JournalError) {
-                          return Center(child: Text('Error: ${state.message}'));
-                        }
-                        return const Center(child: Text('Fetching journals...'));
-                      },
+                                  trailing: const Icon(Icons.arrow_forward_ios),
+                                  isThreeLine: true,
+                                );
+                              },
+                            );
+                          } else if (state is JournalError) {
+                            return Center(child: Text('Error: ${state.message}'));
+                          }
+                          return const Center(child: Text('Fetching journals...'));
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
