@@ -60,4 +60,13 @@ Future<void> addJournal(TravelJournal journal, {File? imageFile}) async {
       rethrow;
     }
   }
+
+  Future<void> deleteJournal(String journalId) async {
+    try {
+      await _journalCollection.doc(journalId).delete();
+    } catch (e) {
+      if (kDebugMode) print("Error deleting journal: $e");
+      rethrow;
+    }
+  }
 }

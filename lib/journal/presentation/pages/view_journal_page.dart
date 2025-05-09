@@ -1,12 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import '../../../journal/data/journal_model.dart';
+import '../../../journal/data/journal_repository.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ViewJournalPage extends StatelessWidget {
   final TravelJournal journal;
 
   const ViewJournalPage({super.key, required this.journal});
+
+  Future<void> _deleteJournal(BuildContext context) async {
+    final journalRepository = Provider.of<JournalRepository>(context, listen: false);
+
+    try {
+      await journalRepository.deleteJournal(journal.id);
+      Navigator.pop(context); // Go back to the previous page after deletion
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Journal deleted successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error deleting journal: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _showDeleteConfirmationBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Are you sure you want to delete this journal?'),
+        action: SnackBarAction(
+          label: 'Delete',
+          textColor: Colors.red,
+          onPressed: () {
+            _deleteJournal(context); // Delete the journal
+          },
+        ),
+        duration: const Duration(seconds: 5), // Keep the bar visible for 5 seconds
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +64,12 @@ class ViewJournalPage extends StatelessWidget {
               onPressed: () {
                 context.pushNamed('edit_journal', params: {'id': journal.id});
               },
+            ),
+          // Show the delete button only if the logged-in user is the creator
+          if (journal.userEmail == activeUserEmail)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => _showDeleteConfirmationBar(context),
             ),
         ],
       ),
